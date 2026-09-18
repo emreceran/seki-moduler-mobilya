@@ -1,0 +1,1298 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="SEKI modueler oturma sistemi - prototip yapim kilavuzu (ic kullanim).">
+<title>SEKİ Prototip Kılavuzu</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --kagit:#EDEFEB; --yuzey:#F7F8F5; --yuzey2:#E3E6E1; --gomulu:#DDE1DA;
+  --murekkep:#181B19; --soluk:#5F665F; --cizgi:#C9CFC8; --cizgi2:#9AA298;
+  --orgu:#94683C; --orgu-yum:#BFA07933; --uyari:#9E3820; --uyari-zemin:#9E382012;
+  --tamam:#2C6349;
+  --dis:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --govde:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --kagit:#131512; --yuzey:#1B1E19; --yuzey2:#232720; --gomulu:#0E100D;
+    --murekkep:#E7EAE3; --soluk:#98A193; --cizgi:#333931; --cizgi2:#4E5649;
+    --orgu:#CBA475; --orgu-yum:#BFA0791F; --uyari:#E88461; --uyari-zemin:#E884611A;
+    --tamam:#6EBE94;
+  }
+}
+:root[data-theme="dark"]{
+  --kagit:#131512; --yuzey:#1B1E19; --yuzey2:#232720; --gomulu:#0E100D;
+  --murekkep:#E7EAE3; --soluk:#98A193; --cizgi:#333931; --cizgi2:#4E5649;
+  --orgu:#CBA475; --orgu-yum:#BFA0791F; --uyari:#E88461; --uyari-zemin:#E884611A;
+  --tamam:#6EBE94;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--kagit); color:var(--murekkep);
+  font-family:var(--govde); font-size:16px; line-height:1.62;
+  -webkit-text-size-adjust:100%;}
+.sar{width:100%; max-width:1080px; margin:0 auto; padding-inline:20px;}
+.metin{max-width:74ch;}
+h1,h2,h3,h4{font-family:var(--dis); font-weight:700; line-height:1.1;
+  text-wrap:balance; margin:0; letter-spacing:.005em;}
+h1{font-size:clamp(34px,6.4vw,54px); text-transform:uppercase;}
+h2{font-size:clamp(25px,4vw,34px);}
+h3{font-size:19px; font-weight:600;}
+h4{font-size:16px; font-weight:600; font-family:var(--govde);}
+p{margin:0;}
+a{color:inherit; text-decoration:underline; text-decoration-thickness:1px;
+  text-underline-offset:2px;}
+b,strong{font-weight:600;}
+code,.mono{font-family:var(--mono); font-size:.9em;}
+.etiket{font-family:var(--mono); font-size:11.5px; font-weight:500;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--soluk);}
+
+/* ---- şerit üst bar ---- */
+#bar{position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+  background:color-mix(in srgb,var(--kagit) 92%,transparent);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--cizgi);}
+#bar .ic{display:flex; align-items:center; gap:14px; min-height:52px;
+  flex-wrap:wrap; padding-block:7px;}
+#bar .kod{font-family:var(--mono); font-size:12px; font-weight:500;
+  letter-spacing:.06em; white-space:nowrap;}
+#bar nav{display:flex; gap:13px; flex-wrap:wrap; margin-right:auto;}
+#bar nav a{font-family:var(--dis); font-size:15px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.03em; text-decoration:none;
+  color:var(--soluk);}
+#bar nav a:hover,#bar nav a:focus-visible{color:var(--murekkep);}
+.ilerleme{display:flex; align-items:center; gap:9px; font-family:var(--mono);
+  font-size:11.5px; white-space:nowrap;}
+.cubuk{width:88px; height:5px; background:var(--gomulu); overflow:hidden;}
+.cubuk i{display:block; height:100%; width:0%; background:var(--tamam);
+  transition:width .25s;}
+
+/* ---- antet ---- */
+.antet{border:1.5px solid var(--murekkep); margin-top:26px; background:var(--yuzey);}
+.antet .ad{padding:22px 20px 18px; border-bottom:1.5px solid var(--murekkep);}
+.antet .ad p{max-width:62ch; margin-top:10px; color:var(--soluk); font-size:16.5px;}
+.antet .kutular{display:grid; grid-template-columns:repeat(4,1fr);}
+.antet .kutu{padding:12px 16px 14px; border-right:1px solid var(--cizgi);}
+.antet .kutu:last-child{border-right:0;}
+.antet .kutu b{display:block; font-family:var(--mono); font-size:13px;
+  font-weight:500; margin-top:4px; line-height:1.45;}
+@media (max-width:820px){ .antet .kutular{grid-template-columns:repeat(2,1fr);}
+  .antet .kutu:nth-child(2){border-right:0;}
+  .antet .kutu:nth-child(-n+2){border-bottom:1px solid var(--cizgi);} }
+@media (max-width:460px){ .antet .kutular{grid-template-columns:1fr;}
+  .antet .kutu{border-right:0; border-bottom:1px solid var(--cizgi);}
+  .antet .kutu:last-child{border-bottom:0;} }
+
+section{padding-block:44px; border-top:1px solid var(--cizgi);}
+section:first-of-type{border-top:0;}
+.basi{display:grid; gap:10px; margin-bottom:26px;}
+.basi p{color:var(--soluk); max-width:72ch;}
+.yigin{display:grid; gap:18px;}
+
+/* ---- uyarı / not kutuları ---- */
+.uyari{border-left:3px solid var(--uyari); background:var(--uyari-zemin);
+  padding:16px 18px; display:grid; gap:9px;}
+.uyari .etiket{color:var(--uyari);}
+.not{border-left:3px solid var(--cizgi2); background:var(--yuzey);
+  padding:15px 18px; display:grid; gap:8px; font-size:15.5px;}
+.vurgu{border:1px solid var(--orgu); background:var(--orgu-yum);
+  padding:16px 18px; display:grid; gap:8px;}
+.vurgu .etiket{color:var(--orgu);}
+
+/* ---- tablolar ---- */
+.kaydir{overflow-x:auto; border:1px solid var(--cizgi); background:var(--yuzey);}
+table{border-collapse:collapse; width:100%; font-size:14.5px;}
+th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--cizgi);
+  vertical-align:top;}
+thead th{font-family:var(--dis); font-size:14px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.05em; background:var(--yuzey2);
+  white-space:nowrap; border-bottom:1.5px solid var(--cizgi2);}
+tbody tr:last-child td{border-bottom:0;}
+td.s,th.s{text-align:right; font-family:var(--mono);
+  font-variant-numeric:tabular-nums; white-space:nowrap;}
+td.k{font-family:var(--mono); font-size:13px; white-space:nowrap;}
+tr.top td{background:var(--yuzey2); font-weight:600;}
+caption{caption-side:top; text-align:left; padding:10px 12px;
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--soluk);
+  border-bottom:1px solid var(--cizgi); background:var(--yuzey2);}
+
+/* ---- kartlar / listeler ---- */
+.izgara{display:grid; gap:16px;}
+.iki{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+.uc{grid-template-columns:repeat(auto-fit,minmax(215px,1fr));}
+.kart{background:var(--yuzey); border:1px solid var(--cizgi); padding:17px;
+  display:grid; gap:9px; align-content:start;}
+.kart h3{font-size:17px;}
+.kart p{font-size:15px; color:var(--soluk);}
+ul.duz{margin:0; padding-left:1.15em; display:grid; gap:6px;}
+ul.duz li::marker{color:var(--cizgi2);}
+dl.cift{display:grid; grid-template-columns:auto 1fr; gap:5px 14px;
+  font-size:14.5px; margin:0;}
+dl.cift dt{color:var(--soluk);}
+dl.cift dd{margin:0; font-family:var(--mono); font-size:13.5px;}
+
+/* ---- adımlar ---- */
+.adim{border:1px solid var(--cizgi); background:var(--yuzey);
+  display:grid; grid-template-columns:auto 1fr; align-items:start;}
+.adim > .harf{font-family:var(--dis); font-size:30px; font-weight:700;
+  padding:16px 0 16px 18px; color:var(--cizgi2); line-height:1;}
+.adim > .ic{padding:16px 18px; display:grid; gap:11px;}
+.adim .ust{display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;}
+.adim .sure{font-family:var(--mono); font-size:12px; color:var(--soluk);
+  border:1px solid var(--cizgi); padding:1px 7px; white-space:nowrap;}
+.adim .sure.fason{color:var(--orgu); border-color:var(--orgu);}
+.adim ol,.adim ul{margin:0; padding-left:1.2em; display:grid; gap:7px;
+  font-size:15.5px;}
+.adim.bitti{border-color:var(--tamam);}
+.adim.bitti > .harf{color:var(--tamam);}
+.onay{display:flex; gap:9px; align-items:center; cursor:pointer;
+  font-family:var(--mono); font-size:12px; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--soluk); user-select:none;
+  border-top:1px solid var(--cizgi); padding-top:11px; margin-top:2px;}
+.onay input{width:17px; height:17px; accent-color:var(--tamam); cursor:pointer;
+  margin:0; flex:none;}
+@media (max-width:520px){ .adim > .harf{padding:14px 0 0 16px; font-size:24px;} }
+
+/* ---- figürler ---- */
+figure{margin:0; background:var(--yuzey); border:1px solid var(--cizgi);
+  padding:18px 18px 12px;}
+figure .cerceve{overflow-x:auto;}
+figure svg{display:block; width:100%; height:auto; color:var(--murekkep);
+  min-width:300px;}
+figcaption{margin-top:12px; padding-top:10px; border-top:1px solid var(--cizgi);
+  font-size:13.5px; color:var(--soluk);}
+
+/* ---- girdi alanları ---- */
+input.tl,input.dk{font-family:var(--mono); font-size:13.5px; width:86px;
+  padding:4px 7px; text-align:right; background:var(--kagit);
+  color:var(--murekkep); border:1px solid var(--cizgi2);
+  font-variant-numeric:tabular-nums;}
+input.tl:focus,input.dk:focus{outline:2px solid var(--orgu); outline-offset:1px;}
+.ozet{display:grid; gap:2px; margin-top:0;}
+.ozet .sat{display:flex; justify-content:space-between; gap:14px;
+  padding:11px 14px; border:1px solid var(--cizgi); border-top:0;
+  background:var(--yuzey); font-size:15px;}
+.ozet .sat:first-child{border-top:1px solid var(--cizgi);}
+.ozet .sat b{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+.ozet .sat.ana{background:var(--orgu-yum); border-color:var(--orgu);
+  font-weight:600;}
+
+footer{border-top:1.5px solid var(--murekkep); padding-block:26px 34px;
+  margin-top:10px;}
+footer .alt{display:flex; justify-content:space-between; gap:16px;
+  flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--soluk);}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;} }
+</style>
+<style>
+html{color-scheme:light dark;}
+:root{padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
+img{max-width:100%;}
+[hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div class="sar ic">
+    <span class="kod">SEKİ-PROTO-01 · Rev A</span>
+    <nav>
+      <a href="#kapsam">Kapsam</a>
+      <a href="#kanit">Kanıt</a>
+      <a href="#fason">Fason</a>
+      <a href="#malzeme">Malzeme</a>
+      <a href="#kesim">Kesim</a>
+      <a href="#imalat">İmalat</a>
+      <a href="#kilit">Kilit</a>
+      <a href="#orgu">Örgü</a>
+      <a href="#test">Test</a>
+      <a href="#risk">Risk</a>
+    </nav>
+    <span class="ilerleme"><span class="cubuk"><i id="cubuk"></i></span><span id="sayac">0/12</span></span>
+  </div>
+</div>
+
+<div class="sar">
+  <div class="antet">
+    <div class="ad">
+      <p class="etiket">Prototip yapım kılavuzu · elle imalat</p>
+      <h1>Dört modül,<br>üç ürün</h1>
+      <p>Seri üretime geçmeden önce elle üretilecek ilk takım: iki kolçak, bir tekli ve bir ikili oturma modülü. Aynı dört parça tekli koltuk, ikili kanepe ve üçlü kanepe olarak kurulabiliyor — kolçak simetrik olduğu için.</p>
+    </div>
+    <div class="kutular">
+      <div class="kutu"><span class="etiket">Üretilecek</span>
+        <b>2 × YK · 1 × O1 · 1 × O2</b></div>
+      <div class="kutu"><span class="etiket">Kurulabilen</span>
+        <b>980 · 1600 · 2220 mm</b></div>
+      <div class="kutu"><span class="etiket">Net el emeği</span>
+        <b>~9 iş günü</b></div>
+      <div class="kutu"><span class="etiket">Takvim</span>
+        <b>~14 iş günü</b></div>
+    </div>
+  </div>
+</div>
+
+<section id="kapsam" class="sar">
+  <div class="basi">
+    <p class="etiket">Kapsam</p>
+    <h2>Dört modülden üç ürün çıkıyor</h2>
+    <p>Kolçak modülünün iki yanı birbirinin aynı olduğu için tek kolçak kodu hem sola hem sağa takılıyor. Bu yüzden 2 kolçak + 1 tekli + 1 ikili oturma modülü, ürün ailesinin üç ana dizilimini de kurmaya yetiyor.</p>
+  </div>
+
+  <figure>
+    <div class="cerceve">
+      <svg viewBox="0 0 470 560" role="img" aria-label="Aynı dört modülden kurulan üç dizilim: tekli koltuk 980 mm, ikili kanepe 1600 mm, üçlü kanepe 2220 mm">
+        <defs>
+          <pattern id="dok" width="13" height="13" patternUnits="userSpaceOnUse">
+            <rect width="13" height="13" style="fill:var(--orgu-yum)"/>
+            <rect x="0" y="1.5" width="13" height="4.5" rx="1.5" style="fill:var(--orgu)" opacity=".34"/>
+            <rect x="1.5" y="7.5" width="4.5" height="4.5" rx="1.5" style="fill:var(--orgu)" opacity=".34"/>
+          </pattern>
+        </defs>
+
+        <!-- SATIR 1 · TEKLİ 980 -->
+        <g>
+          <rect x="10" y="36" width="36" height="124" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="46" y="16" width="124" height="144" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="170" y="36" width="36" height="124" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <line x1="46" y1="72" x2="170" y2="72" stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+          <text x="28" y="106" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">YK</text>
+          <text x="108" y="120" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">O1</text>
+          <text x="188" y="106" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">YK</text>
+          <text x="10" y="182" font-family="Barlow Condensed,sans-serif" font-size="17" font-weight="600" fill="currentColor">TEKLİ KOLTUK</text>
+          <text x="206" y="182" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="13" fill="currentColor" opacity=".75">980 mm</text>
+        </g>
+
+        <!-- SATIR 2 · İKİLİ 1600 -->
+        <g>
+          <rect x="10" y="206" width="36" height="124" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="46" y="186" width="248" height="144" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="294" y="206" width="36" height="124" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <line x1="46" y1="242" x2="294" y2="242" stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+          <line x1="170" y1="186" x2="170" y2="330" stroke="currentColor" stroke-width="1" opacity=".3" stroke-dasharray="4 4"/>
+          <text x="28" y="276" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">YK</text>
+          <text x="170" y="290" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">O2</text>
+          <text x="312" y="276" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">YK</text>
+          <text x="10" y="352" font-family="Barlow Condensed,sans-serif" font-size="17" font-weight="600" fill="currentColor">İKİLİ KANEPE</text>
+          <text x="330" y="352" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="13" fill="currentColor" opacity=".75">1600 mm</text>
+        </g>
+
+        <!-- SATIR 3 · ÜÇLÜ 2220 -->
+        <g>
+          <rect x="10" y="376" width="36" height="124" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="46" y="356" width="248" height="144" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="294" y="356" width="124" height="144" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <rect x="418" y="376" width="36" height="124" fill="url(#dok)" stroke="currentColor" stroke-width="2"/>
+          <line x1="46" y1="412" x2="418" y2="412" stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+          <line x1="170" y1="356" x2="170" y2="500" stroke="currentColor" stroke-width="1" opacity=".3" stroke-dasharray="4 4"/>
+          <text x="28" y="446" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">YK</text>
+          <text x="170" y="460" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">O2</text>
+          <text x="356" y="460" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">O1</text>
+          <text x="436" y="446" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">YK</text>
+          <text x="10" y="522" font-family="Barlow Condensed,sans-serif" font-size="17" font-weight="600" fill="currentColor">ÜÇLÜ KANEPE</text>
+          <text x="454" y="522" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="13" fill="currentColor" opacity=".75">2220 mm</text>
+        </g>
+
+        <!-- oturma kotu notu -->
+        <text x="10" y="548" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor" opacity=".6">İnce yatay çizgi: oturma kotu 440 mm · kesikli çizgi: O2'nin orta dikmesi</text>
+      </svg>
+    </div>
+    <figcaption>Üç dizilim, aynı dört modül. Kolçaklar ve oturma modülleri sökülüp yeniden diziliyor; hiçbir parça ürüne özel değil.</figcaption>
+  </figure>
+
+  <div class="izgara iki" style="margin-top:20px;">
+    <div class="not">
+      <p class="etiket">Neden O1 + O2, iki tane O1 değil</p>
+      <p>İki tane O1 ile de tekli ve ikili kurulabilir, malzeme de daha az olur. Ama o zaman <b>1240 mm'lik sırt paneli hiç denenmemiş olur</b> — sitenin kendi sınırı "tek parça en fazla 1300 mm" diyor, yani en zor panel tam orada. O2 ayrıca orta dikmeyi ve altı ayaklı gövdeyi de test ediyor. Prototipin işi zoru denemek.</p>
+    </div>
+    <div class="not">
+      <p class="etiket">Modül kodları</p>
+      <dl class="cift">
+        <dt>YK</dt><dd>180 × 800 × 620 · ~10 kg</dd>
+        <dt>O1</dt><dd>620 × 800 × 720 · ~9 kg</dd>
+        <dt>O2</dt><dd>1240 × 800 × 720 · ~15 kg</dd>
+        <dt>Oturma kotu</dt><dd>440 mm (minder üstü)</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="uyari" style="margin-top:20px;">
+    <p class="etiket">Metal kesmeden önce oku</p>
+    <p>Bu kılavuzdaki <b>çerçeve geometrisi, kesim ölçüleri ve kilit detayı türetilmiştir.</b> Kaynağı yayındaki SEKİ sitesinin modül ölçüleri, panel ölçüleri ve malzeme listesi; üstüne standart alüminyum doğrama pratiği. Ürünün kendi teknik paftaları <code>moduler-rattan-mobilya</code> deposunda ve o depo GitHub'da değil — görülemedi.</p>
+    <p>Tutarlılık kontrolü olumlu: bu kesim listesinden çıkan çıplak modül ağırlıkları <b>YK 9,3 · O1 7,7 · O2 13,2 kg</b>, minderlerle birlikte sitenin verdiği 10 / 9 / 15 kg'a oturuyor. Yine de kesime başlamadan önce paftalarla üç şeyi karşılaştır: <b>çerçeve kot şeması, MK-01/MK-02 kilit ölçüleri, panel açıklıkları.</b></p>
+  </div>
+</section>
+
+<section id="kanit" class="sar">
+  <div class="basi">
+    <p class="etiket">Kabul kriterleri</p>
+    <h2>Bu prototip neyi kanıtlamalı</h2>
+    <p>Prototip güzel görünmek için değil, altı soruyu cevaplamak için yapılıyor. Her birinin ölçülebilir bir hedefi var; hedefi tutmayan madde tasarım değişikliği demektir, bahane değil.</p>
+  </div>
+
+  <div class="kaydir">
+    <table>
+      <caption>Prototipin cevaplaması gereken altı soru</caption>
+      <thead><tr><th>#</th><th>Soru</th><th>Ölçüm</th><th>Hedef</th></tr></thead>
+      <tbody>
+        <tr><td class="k">1</td><td><b>Kilit tutuyor mu?</b> V-kama plakası 50 mm kursta derzi gerçekten kapatıyor ve yük altında geri kaçmıyor mu?</td><td>Üçlü kanepede her derz kumpasla; 3 kişi 1 saat oturduktan sonra tekrar</td><td class="s">derz ≤ 1,5 mm<br>artış ≤ 0,3 mm</td></tr>
+        <tr><td class="k">2</td><td><b>Tek kişi taşıyor mu?</b></td><td>Her modülü tart</td><td class="s">YK ≤ 10 kg<br>O1 ≤ 9 kg<br>O2 ≤ 15 kg</td></tr>
+        <tr><td class="k">3</td><td><b>Bir dakikada birleşiyor mu?</b></td><td>Üçlü kanepeyi 5 kez kur, kronometre</td><td class="s">5. deneme ≤ 60 sn</td></tr>
+        <tr><td class="k">4</td><td><b>Panel gerçekten sökülebiliyor mu?</b> "Panel panel değişir" sözünün karşılığı var mı?</td><td>Bir sırt panelini sök, tak</td><td class="s">≤ 10 dk<br>alet: 1 tornavida</td></tr>
+        <tr><td class="k">5</td><td><b>El örgüsü ne kadar sürüyor?</b></td><td>Panel panel süre tut → m²/saat</td><td class="s">kaydet<br>(hedef yok)</td></tr>
+        <tr><td class="k">6</td><td><b>Oturması rahat mı?</b> 440 mm oturma, dik sırt.</td><td>5 kişiye 10 dk oturt, sor</td><td class="s">5/5 "rahat"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vurgu" style="margin-top:20px;">
+    <p class="etiket">5. madde neden en değerlisi</p>
+    <p>RATTAMAK'ın bütün iş modeli tek bir cümleye dayanıyor: <b>makine elle örgüden kat kat hızlı.</b> ÖM-1'in föyü saatte 5,8 m² diyor. El örgüsünde bu hız ölçülmeden, 58.000 €'luk bir makinenin gerekçesi tahminden ibaret. Bu prototip o sayıyı üretiyor — dört modülde toplam <b>4,07 m²</b> örgü var, yani ölçüm için fazlasıyla yeterli numune.</p>
+    <p>Süreleri <a href="#kayit">Örgü kayıt defterine</a> gir; sayfa m²/saat ve makineye göre kaç kat farkı hesaplıyor.</p>
+  </div>
+</section>
+
+<section id="atolye" class="sar">
+  <div class="basi">
+    <p class="etiket">Hazırlık</p>
+    <h2>Atölye ve alet</h2>
+    <p>Kaynak ve boya dışarı verildiği için atölyede ağır makine gerekmiyor. Asıl iş kesim, delme, örgü ve montaj — bir tezgah, bir mengene ve el aletleriyle dönüyor.</p>
+  </div>
+
+  <div class="izgara uc">
+    <div class="kart">
+      <h3>Ölçü ve işaretleme</h3>
+      <ul class="duz">
+        <li>Şerit metre 5 m, çelik cetvel 1 m</li>
+        <li>Gönye 300 mm, kumpas (dijital, 0,1 mm)</li>
+        <li>Magnet kaynak gönyesi 90° — 4 adet</li>
+        <li>Maskeleme bandı + markör (parça kodu yazmak için)</li>
+        <li>Su terazisi 600 mm</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Kesme ve delme</h3>
+      <ul class="duz">
+        <li>Alüminyum gönye kesme testeresi (veya metal daire testere) — 90° hassas</li>
+        <li>Şarjlı matkap + HSS metkap seti</li>
+        <li>Kademeli matkap (Ø22'ye kadar) — lazer kesime gitmeyen delikler için</li>
+        <li>El taşlama + eğe seti, çapak alma kalemi</li>
+        <li>Perçin somun tabancası (M6 ve M8 çeneli)</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Tutma ve sıkma</h3>
+      <ul class="duz">
+        <li>Tezgah mengenesi (yumuşak çeneli)</li>
+        <li>İşkence — en az 8 adet</li>
+        <li>Lastik tokmak</li>
+        <li>Tork anahtarı 5–25 Nm</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Örgü için</h3>
+      <ul class="duz">
+        <li><b>Sıcak bıçak</b> — şeridi keserken ucu eritip kapatır (havya + yassı uç de olur)</li>
+        <li><b>Sineklik fitil makarası</b></li>
+        <li><b>16 mm çentikli tarak</b> — 1 m'lik ahşap çıtaya 16 mm aralıklı çentik açtır; çözgüyü hizalamanın tek pratik yolu</li>
+        <li>Isı tabancası (gevşeme almak için)</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Ölçüm ve kayıt</h3>
+      <ul class="duz">
+        <li>Tartı, 0,1 kg hassasiyet, 50 kg kapasite</li>
+        <li>Kronometre (telefon yeter)</li>
+        <li>Kumpas — derz ölçümü için şart</li>
+        <li>Fotoğraf: her adımda çek, prototip raporunun yarısı bu</li>
+      </ul>
+    </div>
+    <div class="kart">
+      <h3>Güvenlik</h3>
+      <ul class="duz">
+        <li>Koruyucu gözlük — alüminyum talaşı sıçrar</li>
+        <li><b>Havalandırma</b> — PE şeridi sıcak bıçakla kesmek duman çıkarır, kapalı alanda kesme</li>
+        <li>Eldiven — delikli sacın kenarı keser</li>
+        <li>Kulak koruyucu (kesim)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="fason" class="sar">
+  <div class="basi">
+    <p class="etiket">Dışarı verilecek işler</p>
+    <h2>Yedi kalem fason</h2>
+    <p>Bunları kendin yapmaya çalışmak prototipi geciktirir. Hepsi Konya'da bulunur; ikisi (lazer kesim, 3D baskı) dosya gönderip almaktan ibaret. Sıra önemli: <b>lazer kesim ve 3D baskıyı en başta sipariş et</b>, çünkü montaj gününde ellerinde olmalı.</p>
+  </div>
+
+  <div class="kaydir">
+    <table>
+      <caption>Fason listesi — ne gönderilir, ne beklenir</caption>
+      <thead><tr><th>#</th><th>İş</th><th>Kime</th><th>Ne gönderilir</th><th>Süre</th></tr></thead>
+      <tbody>
+        <tr><td class="k">F1</td><td><b>Lazer kesim + büküm</b><br>MK-02 kilit plakası, 8 adet, 3 mm 304 paslanmaz</td><td>Lazer kesim atölyesi</td><td>DXF (2 farklı konik açıda 4+4 adet — <a href="#kilit">kilit bölümüne</a> bak)</td><td class="s">2–4 gün</td></tr>
+        <tr><td class="k">F2</td><td><b>3D baskı</b><br>Sırt borusu semeri, 7 adet, PETG veya ASA</td><td>3D baskı servisi</td><td>STL · %100 dolgu, 0,2 mm katman</td><td class="s">2–3 gün</td></tr>
+        <tr><td class="k">F3</td><td><b>TIG kaynak</b><br>4 iskelet: 2 × YK, 1 × O1, 1 × O2</td><td>Alüminyum doğrama atölyesi</td><td>Kesilmiş ve kodlanmış profiller + kot şeması</td><td class="s">1,5 gün</td></tr>
+        <tr><td class="k">F4</td><td><b>Toz boya</b><br>RAL 7016 mat, 4 iskelet (~19 kg)</td><td>Toz boya atölyesi</td><td>Kaynaklı iskeletler · dişli delikler maskelenecek</td><td class="s">2 gün</td></tr>
+        <tr><td class="k">F5</td><td><b>HPL ebatlama</b><br>188 × 808 × 12 mm, 2 parça, kenar 3 mm radyus</td><td>CNC / mutfak tezgahı atölyesi</td><td>Ölçü krokisi</td><td class="s">1–2 gün</td></tr>
+        <tr><td class="k">F6</td><td><b>Perfore sac ebatlama</b><br>616 × 766 ve 1236 × 766, 1,5 mm</td><td>Sac satıcısı (giyotinle keser)</td><td>Ölçü · Ø8 delikli alüminyum istendiği belirtilecek</td><td class="s">aynı gün</td></tr>
+        <tr><td class="k">F7</td><td><b>Döşeme</b><br>3 oturma + 3 sırt minderi</td><td>Dış mekân döşemecisi</td><td>Ölçüler + kumaş/sünger (veya ona aldırt)</td><td class="s">3 gün</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="not" style="margin-top:18px;">
+    <p><b>Panel çerçevelerini boyatma.</b> Sineklik profili hazır antrasit renkte satılıyor — RAL 7016'ya çok yakın. 12 kaseti boyaya göndermek yerine renkli profil al, bir gün ve bir fason kalem kazan.</p>
+  </div>
+</section>
+
+<section id="malzeme" class="sar">
+  <div class="basi">
+    <p class="etiket">Malzeme</p>
+    <h2>Alışveriş listesi</h2>
+    <p>Miktarlar dört modül için hesaplandı, kesim ve hata payı dahil. <b>Birim fiyatlar kaba tahmin</b> — teklif aldıkça hücrelere kendi fiyatını yaz, toplam kendiliğinden güncellenir ve bu tarayıcıda kayıtlı kalır.</p>
+  </div>
+
+  <div class="kaydir">
+    <table id="bom">
+      <caption>Malzeme ve fason — miktar kesin, fiyat tahmini</caption>
+      <thead><tr><th>Kalem</th><th>Şartname</th><th class="s">Miktar</th><th class="s">Birim ₺</th><th class="s">Tutar ₺</th></tr></thead>
+      <tbody>
+        <tr class="top"><td colspan="5">İskelet</td></tr>
+        <tr data-ad="Kare profil" data-mik="7"><td>Kare profil</td><td>30 × 30 × 1,5 mm 6063-T5 alüminyum · 6 m boy</td><td class="s">7 boy</td><td class="s"><input class="tl" id="f1" value="720"></td><td class="s" id="t1">—</td></tr>
+        <tr data-ad="Sırt borusu" data-mik="1"><td>Sırt borusu</td><td>Ø30 × 2 mm sarılı alüminyum boru · 6 m boy</td><td class="s">1 boy</td><td class="s"><input class="tl" id="f2" value="750"></td><td class="s" id="t2">—</td></tr>
+        <tr class="top"><td colspan="5">Panel ve örgü</td></tr>
+        <tr data-ad="Panel çerçeve profili" data-mik="6"><td>Panel çerçeve profili</td><td>Fitil kanallı sineklik profili, antrasit · 6 m boy</td><td class="s">6 boy</td><td class="s"><input class="tl" id="f3" value="120"></td><td class="s" id="t3">—</td></tr>
+        <tr data-ad="Köşe takozu" data-mik="60"><td>Köşe takozu</td><td>Sineklik köşe bağlantısı</td><td class="s">60 ad</td><td class="s"><input class="tl" id="f4" value="3"></td><td class="s" id="t4">—</td></tr>
+        <tr data-ad="Fitil" data-mik="35"><td>Fitil</td><td>Ø4,5 mm sineklik fitili</td><td class="s">35 m</td><td class="s"><input class="tl" id="f5" value="10"></td><td class="s" id="t5">—</td></tr>
+        <tr data-ad="Rattan şerit" data-mik="12"><td><b>Rattan şerit</b></td><td>UV katkılı PE, yarı yuvarlak, 13 mm × 1,8–2,0 mm · 2,12 kg/m²</td><td class="s">12 kg</td><td class="s"><input class="tl" id="f6" value="420"></td><td class="s" id="t6">—</td></tr>
+        <tr class="top"><td colspan="5">Oturma, kolçak, ayak</td></tr>
+        <tr data-ad="Perfore alüminyum sac" data-mik="1"><td>Perfore alüminyum sac</td><td>1,5 mm, Ø8 delik · 1250 × 2500 plaka</td><td class="s">1 ad</td><td class="s"><input class="tl" id="f7" value="3200"></td><td class="s" id="t7">—</td></tr>
+        <tr data-ad="HPL compact" data-mik="1"><td>HPL compact</td><td>12 mm dış mekân sınıfı · 400 × 900 parça yeter</td><td class="s">1 ad</td><td class="s"><input class="tl" id="f8" value="900"></td><td class="s" id="t8">—</td></tr>
+        <tr data-ad="Ayarlı ayak" data-mik="20"><td>Ayarlı ayak</td><td>M8 dişli, TPE kaymaz taban, 20–35 mm</td><td class="s">20 ad</td><td class="s"><input class="tl" id="f9" value="45"></td><td class="s" id="t9">—</td></tr>
+        <tr class="top"><td colspan="5">Kilit ve bağlantı</td></tr>
+        <tr data-ad="MK-02 plaka (lazer)" data-mik="8"><td>MK-02 plaka</td><td>85 × 70 × 3 mm 304 paslanmaz, lazer + büküm (F1)</td><td class="s">8 ad</td><td class="s"><input class="tl" id="f10" value="150"></td><td class="s" id="t10">—</td></tr>
+        <tr data-ad="MK-01 pim" data-mik="16"><td>MK-01 pim</td><td>M8 × 40 mantar başlı A2 paslanmaz bulon (baş Ø ~20)</td><td class="s">16 ad</td><td class="s"><input class="tl" id="f11" value="25"></td><td class="s" id="t11">—</td></tr>
+        <tr data-ad="Pim taşıyıcı lama" data-mik="12"><td>Pim taşıyıcı lama</td><td>5 mm paslanmaz, 30 × 60 mm, M8 diş çekilmiş</td><td class="s">12 ad</td><td class="s"><input class="tl" id="f12" value="50"></td><td class="s" id="t12">—</td></tr>
+        <tr data-ad="Perçin somun" data-mik="30"><td>Perçin somun</td><td>M8 × 20, M6 × 10 (ayak ve HPL için)</td><td class="s">30 ad</td><td class="s"><input class="tl" id="f13" value="8"></td><td class="s" id="t13">—</td></tr>
+        <tr data-ad="Paslanmaz vida seti" data-mik="1"><td>Paslanmaz vida seti</td><td>4,8×16 ve 4,2×13 matkap uçlu, M6×40, EPDM pul</td><td class="s">1 tk</td><td class="s"><input class="tl" id="f14" value="800"></td><td class="s" id="t14">—</td></tr>
+        <tr data-ad="Semer (3D baskı)" data-mik="7"><td>Sırt borusu semeri</td><td>PETG/ASA, 3D baskı (F2)</td><td class="s">7 ad</td><td class="s"><input class="tl" id="f15" value="100"></td><td class="s" id="t15">—</td></tr>
+        <tr class="top"><td colspan="5">Fason işçilik</td></tr>
+        <tr data-ad="TIG kaynak" data-mik="1"><td>TIG kaynak</td><td>4 iskelet, ~1,5 gün (F3)</td><td class="s">1 iş</td><td class="s"><input class="tl" id="f16" value="6000"></td><td class="s" id="t16">—</td></tr>
+        <tr data-ad="Toz boya" data-mik="1"><td>Toz boya</td><td>RAL 7016 mat, ~19 kg (F4)</td><td class="s">1 iş</td><td class="s"><input class="tl" id="f17" value="1800"></td><td class="s" id="t17">—</td></tr>
+        <tr data-ad="Minder" data-mik="6"><td>Minder</td><td>3 oturma (620×730×120) + 3 sırt (620×280×100), kumaş ve sünger dahil (F7)</td><td class="s">6 ad</td><td class="s"><input class="tl" id="f18" value="1250"></td><td class="s" id="t18">—</td></tr>
+        <tr data-ad="Sarf" data-mik="1"><td>Sarf</td><td>Kesme diski, matkap, bant, eldiven, temizlik</td><td class="s">1 tk</td><td class="s"><input class="tl" id="f19" value="1200"></td><td class="s" id="t19">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ozet">
+    <div class="sat"><span>Malzeme</span><b id="oMalzeme">—</b></div>
+    <div class="sat"><span>Fason işçilik</span><b id="oFason">—</b></div>
+    <div class="sat ana"><span>Dört modül toplamı</span><b id="oToplam">—</b></div>
+    <div class="sat"><span>Modül başına ortalama</span><b id="oModul">—</b></div>
+  </div>
+
+  <div class="not" style="margin-top:18px;">
+    <p>Karşılaştırma için: bu dört modül üçlü kanepe olarak kurulduğunda liste fiyatı <b>34.900 ₺</b>, tekli + ikili olarak ayrı satılsa <b>43.800 ₺</b>. İlk numunenin bir takımın satış fiyatı civarında çıkması normaldir — kalıp, deneme ve öğrenme bedeli bu ilk sete yükleniyor. <b>Kendi emeğin (~9 gün) bu toplamda yok.</b></p>
+  </div>
+</section>
+
+<section id="kesim" class="sar">
+  <div class="basi">
+    <p class="etiket">Kesim listesi</p>
+    <h2>Profil kesimi</h2>
+    <p>Tek profil tipinden üç modülün tamamı çıkıyor: <b>30 × 30 × 1,5 mm kare alüminyum.</b> Net 32,92 m; %12 kesim payıyla 7 boy (42 m) al. Tolerans ±0,5 mm, kesim 90°. Her parçaya kesildiği anda kodunu yaz — kaynakçıya kodlu gider.</p>
+  </div>
+
+  <figure>
+    <div class="cerceve">
+      <svg viewBox="0 0 540 470" role="img" aria-label="O1 modülünün yan çerçevesinin yandan görünüşü: alt kayıt, oturma kayıdı, ön dikme, arka dikme ve üstteki sırt borusu, zeminden milimetre kotlarıyla">
+        <!-- zemin -->
+        <line x1="60" y1="400" x2="500" y2="400" stroke="currentColor" stroke-width="1.5" opacity=".45"/>
+        <!-- ayaklar -->
+        <rect x="75" y="387.5" width="16" height="12.5" fill="currentColor" opacity=".55"/>
+        <rect x="449" y="387.5" width="16" height="12.5" fill="currentColor" opacity=".55"/>
+        <!-- alt kayıt 800 · kot 25-55 -->
+        <rect x="70" y="372.5" width="400" height="15" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <!-- ön dikme 235 · kot 55-290 -->
+        <rect x="70" y="255" width="15" height="117.5" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <!-- arka dikme 635 · kot 55-690 -->
+        <rect x="455" y="55" width="15" height="317.5" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <!-- oturma kayıdı 800 · kot 290-320 -->
+        <rect x="70" y="240" width="400" height="15" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <!-- oturma sacı -->
+        <line x1="70" y1="240" x2="453" y2="240" style="stroke:var(--orgu)" stroke-width="3"/>
+        <!-- sırt borusu Ø30 · kot 690-720 -->
+        <circle cx="462.5" cy="47.5" r="7.5" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <!-- minder üstü 440 -->
+        <line x1="70" y1="180" x2="440" y2="180" stroke="currentColor" stroke-width="1.2" stroke-dasharray="6 5" opacity=".5"/>
+
+        <!-- kot dimension line -->
+        <line x1="45" y1="400" x2="45" y2="40" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <g font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor" text-anchor="end">
+          <line x1="40" y1="400" x2="50" y2="400" stroke="currentColor" stroke-width="1" opacity=".5"/>
+          <text x="36" y="404" opacity=".8">0</text>
+          <line x1="40" y1="372.5" x2="50" y2="372.5" stroke="currentColor" stroke-width="1" opacity=".5"/>
+          <text x="36" y="376" opacity=".8">55</text>
+          <line x1="40" y1="240" x2="50" y2="240" stroke="currentColor" stroke-width="1" opacity=".5"/>
+          <text x="36" y="244" opacity=".8">320</text>
+          <line x1="40" y1="180" x2="50" y2="180" stroke="currentColor" stroke-width="1" opacity=".5"/>
+          <text x="36" y="184" opacity=".8">440</text>
+          <line x1="40" y1="40" x2="50" y2="40" stroke="currentColor" stroke-width="1" opacity=".5"/>
+          <text x="36" y="44" opacity=".8">720</text>
+        </g>
+
+        <!-- parça etiketleri -->
+        <g font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor">
+          <text x="200" y="384">O-1 · alt kayıt 800</text>
+          <text x="200" y="251">O-2 · oturma kayıdı 800</text>
+          <text x="94" y="320">O-3 · ön dikme 235</text>
+          <text x="448" y="200" text-anchor="end">O-4 · arka dikme 635</text>
+          <text x="448" y="36" text-anchor="end">Ø30 boru 620</text>
+          <text x="78" y="172" opacity=".7">minder üstü — oturma kotu</text>
+        </g>
+
+        <!-- derinlik ölçüsü -->
+        <line x1="70" y1="430" x2="470" y2="430" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <line x1="70" y1="422" x2="70" y2="438" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <line x1="470" y1="422" x2="470" y2="438" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <text x="270" y="452" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="currentColor" opacity=".8">800 · derinlik</text>
+        <text x="60" y="452" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".6">ÖN</text>
+        <text x="480" y="452" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".6">ARKA</text>
+      </svg>
+    </div>
+    <figcaption>O1'in yan çerçevesi — her modülde 2 adet (O2'de 3, ortadaki dikme çerçevesi). Ölçüler zeminden mm, ayak 25 mm'ye ayarlı. Bu düzleme dik duran bağlantı kayıtları (O1'de 560, O2'de 575 mm) görünmüyor; onlar iki çerçeveyi birbirine bağlıyor.</figcaption>
+  </figure>
+
+  <div class="kaydir" style="margin-top:20px;">
+    <table>
+      <caption>Kesim listesi · 30 × 30 × 1,5 mm kare profil</caption>
+      <thead><tr><th>Kod</th><th>Parça</th><th class="s">Boy mm</th><th class="s">YK ×2</th><th class="s">O1 ×1</th><th class="s">O2 ×1</th><th class="s">Toplam ad</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Y-1</td><td>YK alt kayıt</td><td class="s">800</td><td class="s">4</td><td class="s">—</td><td class="s">—</td><td class="s">4</td></tr>
+        <tr><td class="k">Y-2</td><td>YK üst kayıt</td><td class="s">800</td><td class="s">4</td><td class="s">—</td><td class="s">—</td><td class="s">4</td></tr>
+        <tr><td class="k">Y-3</td><td>YK dikme</td><td class="s">523</td><td class="s">8</td><td class="s">—</td><td class="s">—</td><td class="s">8</td></tr>
+        <tr><td class="k">Y-4</td><td>YK bağlantı kayıdı (alt, üst, orta)</td><td class="s">120</td><td class="s">12</td><td class="s">—</td><td class="s">—</td><td class="s">12</td></tr>
+        <tr><td class="k">O-1</td><td>Alt kayıt</td><td class="s">800</td><td class="s">—</td><td class="s">2</td><td class="s">3</td><td class="s">5</td></tr>
+        <tr><td class="k">O-2</td><td>Oturma kayıdı</td><td class="s">800</td><td class="s">—</td><td class="s">2</td><td class="s">3</td><td class="s">5</td></tr>
+        <tr><td class="k">O-3</td><td>Ön dikme</td><td class="s">235</td><td class="s">—</td><td class="s">2</td><td class="s">3</td><td class="s">5</td></tr>
+        <tr><td class="k">O-4</td><td>Arka dikme</td><td class="s">635</td><td class="s">—</td><td class="s">2</td><td class="s">3</td><td class="s">5</td></tr>
+        <tr><td class="k">O-5</td><td>O1 bağlantı kayıdı</td><td class="s">560</td><td class="s">—</td><td class="s">5</td><td class="s">—</td><td class="s">5</td></tr>
+        <tr><td class="k">O-6</td><td>O2 bağlantı kayıdı</td><td class="s">575</td><td class="s">—</td><td class="s">—</td><td class="s">10</td><td class="s">10</td></tr>
+        <tr class="top"><td class="k">—</td><td>Profil uzunluğu</td><td class="s">—</td><td class="s">12.024</td><td class="s">7.740</td><td class="s">13.160</td><td class="s">32.924 mm</td></tr>
+        <tr><td class="k">B-1</td><td>Sırt borusu Ø30 × 2</td><td class="s">620 / 1240</td><td class="s">—</td><td class="s">1</td><td class="s">1</td><td class="s">2</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="izgara iki" style="margin-top:20px;">
+    <div class="not">
+      <p class="etiket">Neden bu kotlar</p>
+      <p>Alt kayıt 25–55, oturma kayıdı 290–320. Oturma sacı 320'de, üstüne 120 mm minder → <b>oturma kotu 440</b>. Arka dikme 690'a çıkıyor, üstüne Ø30 boru → <b>toplam 720</b>. Sırt minderi bu iki kot arasında 280 mm, yani sırt yüksekliği oturmanın üstünde 280 mm.</p>
+    </div>
+    <div class="not">
+      <p class="etiket">O2'nin farkı</p>
+      <p>O2'de <b>üç çerçeve</b> var: iki yan, bir orta. Bağlantı kayıtları iki açıklığa bölünüyor, her biri 575 mm. Orta çerçeve sırtın 1240 mm'de esnemesini engelliyor ve iki ayak daha ekliyor — <b>O2 toplam 6 ayak.</b></p>
+    </div>
+  </div>
+
+  <div class="kaydir" style="margin-top:20px;">
+    <table>
+      <caption>Panel listesi · dokuma kasetler</caption>
+      <thead><tr><th>Kod</th><th>Yer</th><th class="s">Ölçü mm</th><th class="s">Adet</th><th class="s">Alan m²</th><th class="s">Çözgü</th><th class="s">Atkı</th></tr></thead>
+      <tbody>
+        <tr><td class="k">P-YK-Y</td><td>YK yan (dış + iç)</td><td class="s">800 × 583</td><td class="s">4</td><td class="s">1,866</td><td class="s">50</td><td class="s">36</td></tr>
+        <tr><td class="k">P-YK-U</td><td>YK uç (ön + arka)</td><td class="s">180 × 583</td><td class="s">4</td><td class="s">0,420</td><td class="s">11</td><td class="s">36</td></tr>
+        <tr><td class="k">MP-01</td><td>O1 ön</td><td class="s">620 × 295</td><td class="s">1</td><td class="s">0,183</td><td class="s">39</td><td class="s">18</td></tr>
+        <tr><td class="k">MP-02</td><td>O1 sırt</td><td class="s">620 × 665</td><td class="s">1</td><td class="s">0,412</td><td class="s">39</td><td class="s">42</td></tr>
+        <tr><td class="k">MP-01b</td><td>O2 ön</td><td class="s">1240 × 295</td><td class="s">1</td><td class="s">0,366</td><td class="s">78</td><td class="s">18</td></tr>
+        <tr><td class="k">MP-02b</td><td><b>O2 sırt</b> — en zor panel</td><td class="s">1240 × 665</td><td class="s">1</td><td class="s">0,825</td><td class="s">78</td><td class="s">42</td></tr>
+        <tr class="top"><td class="k">—</td><td>Toplam</td><td class="s">—</td><td class="s">12</td><td class="s">4,072</td><td class="s">—</td><td class="s">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="not" style="margin-top:18px;">
+    <p>Sitenin verdiği dokuma alanları (YK 1,17 · O1 0,76 · O2 1,46 m²) bu net panel alanlarının %20–25 üstünde. Fark fitil payı ve fire; şerit alırken o payı hesaba kat, panel çerçevesi keserken kat<b>ma</b>. Panel dış ölçüsü modül yüzünün tamamı kadar — kaset yüze bindirme takılıyor ve önden vidalanıyor, böylece sökülebiliyor.</p>
+  </div>
+</section>
+
+<section id="imalat" class="sar">
+  <div class="basi">
+    <p class="etiket">İmalat · 12 adım</p>
+    <h2>Sırayla ne yapılacak</h2>
+    <p>Adımlar gerçek bir sıra: A'daki doğrulama yapılmadan B'de metal kesilmez, C kaynağı bitmeden E'deki delikler açılmaz. Fason bekleme süreleri işaretli — o günlerde örgüye (G) devam edilir, takvim böyle 14 güne iniyor.</p>
+  </div>
+
+  <div class="yigin">
+
+    <div class="adim" data-adim="A">
+      <div class="harf">A</div>
+      <div class="ic">
+        <div class="ust"><h3>Doğrulama ve sipariş</h3><span class="sure">1 gün · sen</span></div>
+        <ol>
+          <li><b>Paftalarla karşılaştır.</b> Diğer bilgisayardaki <code>moduler-rattan-mobilya</code> klasöründen çerçeve kot şemasını, MK-01/MK-02 ölçülerini ve panel açıklıklarını çıkar; bu kılavuzun sayılarıyla karşılaştır. Fark varsa <b>paftaya uy</b>, bu kılavuzu düzelt.</li>
+          <li><b>1:1 kontrol şablonu kes.</b> Kartondan bir YK kesiti (180 × 620) ve bir O1 kesiti (620 × 720) çıkar, yere koy, üstüne otur. Oturma kotu 440 ve sırt 280 mm gerçekten rahat mı — burada anlaşılır, metalde anlaşılmaz.</li>
+          <li><b>F1 ve F2'yi hemen sipariş et.</b> MK-02 için DXF, semer için STL. Bunlar 2–4 gün sürer ve montaj gününde elinde olmalı.</li>
+          <li>Kaynak (F3), boya (F4) ve döşeme (F7) atölyelerinden randevu al. Tarih ver, boşta bekleme.</li>
+          <li>Malzeme listesindeki kalemleri sipariş et. Şeridi <b>tek partiden</b> al — farklı parti farklı ton demek.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="A"><span>A tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="B">
+      <div class="harf">B</div>
+      <div class="ic">
+        <div class="ust"><h3>Profil kesimi</h3><span class="sure">0,5 gün · sen</span></div>
+        <ol>
+          <li>Kesim listesine göre kes. <b>Tolerans ±0,5 mm, açı tam 90°.</b> Aynı koddan olan parçaları arka arkaya kes, mastar kullan — 8 tanesi 523 mm olacak ve hepsi aynı olmalı.</li>
+          <li>Her parçaya kesildiği anda maskeleme bandı yapıştır, kodunu yaz (Y-3, O-4 gibi). Kaynakçıya kodlu teslim edilir.</li>
+          <li>Kesim ağızlarının çapağını al. Alüminyum çapağı kaynak dikişini bozar.</li>
+          <li>Kodlara göre gruplayıp bağla: <b>4 ayrı demet</b> — YK-1, YK-2, O1, O2.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="B"><span>B tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="C">
+      <div class="harf">C</div>
+      <div class="ic">
+        <div class="ust"><h3>İskelet kaynağı</h3><span class="sure fason">1,5 gün · fason F3</span></div>
+        <ol>
+          <li><b>Önce yan çerçeveler.</b> Düz bir tezgahta, magnet gönyelerle 90° tutarak. Her modülde 2 (O2'de 3) özdeş çerçeve çıkacak; birbirinin üstüne koyup kontrol et, 1 mm'den fazla sapma olmasın.</li>
+          <li><b>Sonra bağlantı kayıtları.</b> İki çerçeveyi karşı karşıya kur, kayıtları arasına yerleştir, punta at, ölçüyü kontrol et, sonra tam kaynak.</li>
+          <li><b>Köşegen kontrolü:</b> her yüzde iki köşegeni ölç, fark <b>≤ 2 mm</b>. Bu tutmazsa modüller yan yana gelince derz eşit kapanmaz ve kilit tutmaz.</li>
+          <li><b>Panel yüzleri düzlemsel olmalı</b> — bir mastar çıta dayayıp kontrol et, sapma ≤ 1 mm. Panel kaseti bindirme oturacak.</li>
+          <li>Çarpılmayı azaltmak için karşılıklı sıra ile kaynak yap (bir sağ, bir sol), tek yönde ilerlemeyin. 1,5 mm cidar yakmaya müsait — <b>kaynakçıdan önce bir deneme parçası isteyin.</b></li>
+          <li>Dikişleri hafif taşla, keskin çapak bırakma.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="C"><span>C tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="D">
+      <div class="harf">D</div>
+      <div class="ic">
+        <div class="ust"><h3>Delikler ve toz boya</h3><span class="sure fason">2 gün · fason F4</span></div>
+        <ol>
+          <li><b>Delikleri boyadan ÖNCE aç.</b> Perçin somun delikleri: ayak pozisyonlarına Ø11 (M8 için), YK üst kayıtlarına Ø9 (M6 için). Toplam 18 + 8 delik.</li>
+          <li>Ayak delikleri alt kayıdın <b>alt yüzünde</b>, köşelerden 60 mm içeride. O2'de ortadaki çerçeveye de 2 adet.</li>
+          <li>Boyaya gönderirken dişli/hassas yerleri maskele. <b>RAL 7016 mat</b>, alüminyum için kromatsız ön işlem.</li>
+          <li>Boya 60–80 µm kalınlık ekler. Sıkı geçecek yerlerde (panel kaseti, semer oturması) <b>0,2 mm pay bırakıldığını</b> hatırla; gelince kontrol et.</li>
+          <li>Gelen iskeletleri battaniye üstünde taşı. Toz boya çizilir, prototip fotoğraf çekilecek.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="D"><span>D tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="E">
+      <div class="harf">E</div>
+      <div class="ic">
+        <div class="ust"><h3>Ayaklar ve pim taşıyıcılar</h3><span class="sure">0,5 gün · sen</span></div>
+        <ol>
+          <li>Ø11 deliklere <b>M8 perçin somun</b> çak (tabancayla). 18 adet: YK'lara 4+4, O1'e 4, O2'ye 6.</li>
+          <li>Ayarlı ayakları tak, hepsini <b>25 mm</b>'ye ayarla (nominal kot).</li>
+          <li><b>Pim taşıyıcı lamaları yerleştir.</b> Her modülün derz oluşturacak yüzünde, alt kayıdın altına 2 lama: ön uçtan <b>150 mm</b> ve arka uçtan <b>150 mm</b>. Lama 4,8 × 16 paslanmaz matkap uçlu vida ile bağlanır.</li>
+          <li>Hangi yüze pim geleceği: <b>YK'da sadece iç yüz</b> (dış yüz görünen yüz), O1 ve O2'de <b>iki yan yüz</b>. Toplam 12 pim pozisyonu.</li>
+          <li>MK-01 pimlerini lamaya vidala, <b>baş altına 4 mm ara burç</b> koy. 12 Nm'ye sık. Pimin altta kalan boyu 9 mm olmalı — kumpasla doğrula.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="E"><span>E tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="F">
+      <div class="harf">F</div>
+      <div class="ic">
+        <div class="ust"><h3>Panel çerçeveleri</h3><span class="sure">0,5 gün · sen</span></div>
+        <ol>
+          <li>Sineklik profilini panel listesindeki dış ölçülere göre kes. Köşeler <b>köşe takozu</b> ile 90° birleşiyor (45° gönye gerekmez, prototip için takoz daha hızlı ve sökülebilir).</li>
+          <li><b>12 kaset</b> çıkacak. Her birinin köşegenini ölç, fark <b>≤ 1 mm</b>. Kare olmayan kasete düzgün örgü girmez.</li>
+          <li>Fitil kanalının hangi yüze baktığını sabitle — <b>hepsinde aynı yüz</b>, yoksa örgü bitince kasetlerin bir kısmı ters takılır.</li>
+          <li>Kasetleri kodla, örgü sırasına diz: küçükten büyüğe. <b>İlk panel P-YK-U (180 × 583) olsun</b> — en küçük, öğrenme onda olsun.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="F"><span>F tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="G">
+      <div class="harf">G</div>
+      <div class="ic">
+        <div class="ust"><h3>Örgü</h3><span class="sure">4–6 gün · sen</span></div>
+        <p style="font-size:15.5px; color:var(--soluk);">İşin en uzun ve en belirleyici adımı. Tekniğin tamamı ve süre kaydı <a href="#orgu">Örgü bölümünde</a>. Kaynak ve boya fasondayken bu adıma paralel devam edilemez (kasetler F'de hazır olmalı), ama <b>minder fasonu (F7) bu günlerde döner</b>.</p>
+        <label class="onay"><input type="checkbox" data-o="G"><span>G tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="H">
+      <div class="harf">H</div>
+      <div class="ic">
+        <div class="ust"><h3>Oturma sacı</h3><span class="sure">0,5 gün · sen</span></div>
+        <ol>
+          <li>Ebatlanmış perfore sacın <b>dört kenarını 10 mm alta bük</b> (mengene + tokmak) veya U profil geçir. Bükülmemiş 1,5 mm sac kenarı keser — bu bir güvenlik maddesi, süs değil.</li>
+          <li>O1 sacı 616 × 766, O2 sacı 1236 × 766. Arka dikmelerin önünde bitiyor, çentik açmak gerekmiyor.</li>
+          <li>Oturma kayıtlarına <b>4,8 × 16 paslanmaz matkap uçlu vida</b> ile bağla, 200 mm aralıkla. O2'de ortadaki çerçeveye de vidala.</li>
+          <li>Delikler suyu geçirsin diye var — sacın <b>hiçbir yerinde su göleti oluşmadığını</b> kontrol et: bir bardak su dök, akıp gitmeli.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="H"><span>H tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="I">
+      <div class="harf">I</div>
+      <div class="ic">
+        <div class="ust"><h3>Sırt borusu</h3><span class="sure">0,5 gün · sen</span></div>
+        <ol>
+          <li>3D baskı semerleri arka dikmelerin tepesine oturt, <b>M6 × 40 paslanmaz</b> ile bağla. O1'e 2, O2'ye 3 adet.</li>
+          <li>Ø30 boruyu (O1: 620, O2: 1240 mm) semerlere yatır, üstten M6 ile kilitle.</li>
+          <li>Boru uçlarına plastik tapa — içine su girmesin.</li>
+          <li><b>Not:</b> seri üretimde bu semer PA6-GF30 enjeksiyon. 3D baskı PETG prototip için yeterli ama <b>UV'de yıllarca dayanmaz</b>; prototip 6 aydan uzun dışarıda kalacaksa POM'dan freze ettir.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="I"><span>I tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="J">
+      <div class="harf">J</div>
+      <div class="ic">
+        <div class="ust"><h3>Kolçak kapağı ve panel montajı</h3><span class="sure">0,5 gün · sen</span></div>
+        <ol>
+          <li>HPL kapağı (188 × 808 × 12) YK'nın üst kayıtlarına <b>alttan M6 vida</b> ile bağla — üstte vida başı görünmesin. Her yana 4 vida.</li>
+          <li>Kenarları 3 mm radyusluysa 240 zımparayla hafif geç. HPL kenarı çok keskindir.</li>
+          <li><b>Panel kasetlerini tak.</b> Kaset modül yüzünü tam kaplıyor; çerçevesinden geçen <b>4,2 × 13 paslanmaz vida + EPDM pul</b> ile modül profiline vidalanıyor, panel başına 6 vida.</li>
+          <li>Vida başları görünecek — prototipte kabul. Seri üretimde geçme kanal olacak; <b>bunu sunumda söyle</b>, "prototip vidalı, ürün geçmeli" diye.</li>
+          <li>Sırayla tak ve her panelden sonra modülü kaldırıp bak: panel gergin mi, çerçeve bükülmüş mü.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="J"><span>J tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="K">
+      <div class="harf">K</div>
+      <div class="ic">
+        <div class="ust"><h3>Minderler</h3><span class="sure fason">3 gün · fason F7 · paralel</span></div>
+        <ol>
+          <li><b>3 oturma minderi</b> 620 × 730 × 120, <b>3 sırt minderi</b> 620 × 280 × 100.</li>
+          <li>Sünger: <b>dış mekân açık gözenekli (drenajlı)</b> sünger. Normal sünger su tutar ve küflenir — sitenin verdiği sözün dayanağı bu malzeme.</li>
+          <li>Kılıf: solution-dyed akrilik, kırık beyaz. <b>Fermuarlı</b> (yıkanabilir) ve alt yüzde <b>drenaj kuşgözü</b> — köşelere 2, ortaya 1.</li>
+          <li>Döşemeciye ölçüyü verirken <b>minderin nereye oturacağını göster</b>: oturma minderi delikli sac üstüne, sırt minderi paneli arkasına yaslanıyor. Aksi halde kalınlığı yanlış hesaplar.</li>
+          <li>O1 ve O2'nin minderleri <b>aynı ölçüde</b> — O2'ye iki tane gidiyor. Bu bir tasarım kararı, döşemeciye tek kalıp yeter.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="K"><span>K tamamlandı</span></label>
+      </div>
+    </div>
+
+    <div class="adim" data-adim="L">
+      <div class="harf">L</div>
+      <div class="ic">
+        <div class="ust"><h3>Birleştirme ve kilit ayarı</h3><span class="sure">1 gün · sen</span></div>
+        <ol>
+          <li>Üç dizilimi sırayla kur: <b>tekli → ikili → üçlü</b>. Her kurulumda süre tut.</li>
+          <li>Her derzi kumpasla ölç. Hedef <b>1 mm</b>, kabul <b>≤ 1,5 mm</b>.</li>
+          <li><b>Kilit ayarı:</b> plaka çok zor giriyorsa pim ara burcunu 0,5 mm kalınlaştır; gevşek kalıyorsa 0,5 mm incelt. Lazerden iki farklı konik açıda plaka geldi — hangisinin tuttuğunu burada seç ve <b>hangisi olduğunu yaz.</b></li>
+          <li>Ayakları zemine göre ayarla, su terazisiyle oturma sacını kontrol et.</li>
+          <li>Her modülü tart, kaydet. <a href="#test">Test bölümündeki</a> sekiz ölçümü sırayla yap.</li>
+          <li>Üç dizilimin de fotoğrafını çek — render'ların yerine <b>gerçek fotoğraf</b> koyulacak site bu.</li>
+        </ol>
+        <label class="onay"><input type="checkbox" data-o="L"><span>L tamamlandı</span></label>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="kaydir" style="margin-top:22px;">
+    <table>
+      <caption>Takvim — fason beklemeleri paralel yürüyor</caption>
+      <thead><tr><th>Gün</th><th>Sen</th><th>Fason</th></tr></thead>
+      <tbody>
+        <tr><td class="k">1</td><td>A · doğrulama, sipariş</td><td>F1 lazer, F2 baskı sipariş edildi</td></tr>
+        <tr><td class="k">2</td><td>B · profil kesimi</td><td>—</td></tr>
+        <tr><td class="k">3–4</td><td>F · panel çerçeveleri</td><td>C · kaynak</td></tr>
+        <tr><td class="k">5–6</td><td>G · örgü başlıyor</td><td>D · toz boya · F7 döşeme başladı</td></tr>
+        <tr><td class="k">7–10</td><td>G · örgü sürüyor</td><td>F7 döşeme</td></tr>
+        <tr><td class="k">11</td><td>E · ayak, pim · H · oturma sacı</td><td>—</td></tr>
+        <tr><td class="k">12</td><td>I · sırt borusu · J · HPL, panel montajı</td><td>—</td></tr>
+        <tr><td class="k">13–14</td><td>L · birleştirme, ayar, test, fotoğraf</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="kilit" class="sar">
+  <div class="basi">
+    <p class="etiket">Kritik detay</p>
+    <h2>MK-01 pim, MK-02 kama plakası</h2>
+    <p>Ürünün tamamı bu iki parçaya bakıyor: vida yok, alet yok sözü buradan geliyor ve prototipin 1. kabul kriteri bu. Mekanizma bir <b>kama</b>: modülleri elle ittiğinde aralarında birkaç milimetre boşluk kalır, plakayı pimlere geçirip 50 mm kaydırdığında daralan kanal iki modülü birbirine çeker ve kendiliğinden kilitlenir.</p>
+  </div>
+
+  <figure>
+    <div class="cerceve">
+      <svg viewBox="0 0 640 300" role="img" aria-label="Solda MK-02 kama plakasının alttan görünüşü: iki giriş deliği ve birbirine yaklaşan iki kanal. Sağda takarken pim aralığı 36 milimetre ve derz 6 milimetre, kilitliyken pim aralığı 31 milimetre ve derz 1 milimetre.">
+        <!-- ===== SOL: PLAKA PARÇA RESMİ ===== -->
+        <!-- plaka gövdesi -->
+        <rect x="45" y="45" width="140" height="170" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <!-- tutamak dili (bükülü) -->
+        <rect x="45" y="215" width="140" height="30" style="fill:var(--gomulu)" stroke="currentColor" stroke-width="2"/>
+        <line x1="45" y1="215" x2="185" y2="215" stroke="currentColor" stroke-width="2"/>
+        <text x="115" y="235" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".75">tutamak dili 15</text>
+
+        <!-- kanallar (delik) -->
+        <polygon points="70,175 75,65 93,65 88,175" style="fill:var(--gomulu)" stroke="currentColor" stroke-width="1.6"/>
+        <polygon points="160,175 155,65 137,65 142,175" style="fill:var(--gomulu)" stroke="currentColor" stroke-width="1.6"/>
+        <!-- giriş delikleri -->
+        <circle cx="79" cy="175" r="22" style="fill:var(--gomulu)" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="151" cy="175" r="22" style="fill:var(--gomulu)" stroke="currentColor" stroke-width="1.6"/>
+        <!-- pimler giriş deliğinde -->
+        <circle cx="79" cy="175" r="20" style="fill:var(--orgu)" opacity=".5"/>
+        <circle cx="151" cy="175" r="20" style="fill:var(--orgu)" opacity=".5"/>
+        <!-- kanal ucu = kilitli konum -->
+        <circle cx="84" cy="74" r="9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/>
+        <circle cx="146" cy="74" r="9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/>
+
+        <!-- kayma yönü oku -->
+        <defs>
+          <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 9,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+        <line x1="28" y1="115" x2="28" y2="195" stroke="currentColor" stroke-width="1.6" marker-end="url(#ok)"/>
+        <text x="28" y="105" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor">50</text>
+
+        <!-- ölçüler -->
+        <line x1="45" y1="34" x2="185" y2="34" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <line x1="45" y1="28" x2="45" y2="40" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <line x1="185" y1="28" x2="185" y2="40" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <text x="115" y="24" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor" opacity=".8">70</text>
+        <line x1="200" y1="45" x2="200" y2="215" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <line x1="194" y1="45" x2="206" y2="45" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <line x1="194" y1="215" x2="206" y2="215" stroke="currentColor" stroke-width="1" opacity=".5"/>
+        <text x="215" y="134" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor" opacity=".8">85</text>
+        <text x="115" y="58" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".8">kanal 9</text>
+        <text x="115" y="179" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".8">Ø22</text>
+        <text x="45" y="268" font-family="Barlow Condensed,sans-serif" font-size="15" font-weight="600" fill="currentColor">MK-02 · 3 mm PASLANMAZ</text>
+        <text x="45" y="285" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".65">alttan görünüş · kesikli daire: kilitli pim konumu</text>
+
+        <!-- ===== SAĞ: İKİ DURUM ===== -->
+        <!-- durum A -->
+        <rect x="300" y="60" width="60" height="100" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <rect x="372" y="60" width="60" height="100" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <circle cx="330" cy="110" r="11" style="fill:var(--orgu)" opacity=".55" stroke="currentColor" stroke-width="1.4"/>
+        <circle cx="402" cy="110" r="11" style="fill:var(--orgu)" opacity=".55" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="330" y1="46" x2="402" y2="46" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        <line x1="330" y1="40" x2="330" y2="52" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        <line x1="402" y1="40" x2="402" y2="52" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        <text x="366" y="34" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor" opacity=".8">36</text>
+        <text x="366" y="180" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor">derz 6 mm</text>
+        <text x="366" y="203" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="15" font-weight="600" fill="currentColor">TAKARKEN</text>
+
+        <!-- geçiş oku -->
+        <line x1="444" y1="110" x2="470" y2="110" stroke="currentColor" stroke-width="1.8" marker-end="url(#ok)"/>
+        <text x="457" y="98" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10.5" fill="currentColor" opacity=".75">kaydır</text>
+
+        <!-- durum B -->
+        <rect x="480" y="60" width="60" height="100" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <rect x="542" y="60" width="60" height="100" style="fill:var(--orgu-yum)" stroke="currentColor" stroke-width="2"/>
+        <circle cx="510" cy="110" r="11" style="fill:var(--orgu)" opacity=".55" stroke="currentColor" stroke-width="1.4"/>
+        <circle cx="572" cy="110" r="11" style="fill:var(--orgu)" opacity=".55" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="510" y1="46" x2="572" y2="46" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        <line x1="510" y1="40" x2="510" y2="52" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        <line x1="572" y1="40" x2="572" y2="52" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        <text x="541" y="34" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor" opacity=".8">31</text>
+        <text x="541" y="180" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor">derz 1 mm</text>
+        <text x="541" y="203" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="15" font-weight="600" fill="currentColor">KİLİTLİ</text>
+        <text x="300" y="268" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".65">Plaka 50 mm kayar; pim aralığı 36'dan 31'e düşer,</text>
+        <text x="300" y="285" font-family="IBM Plex Mono,monospace" font-size="11" fill="currentColor" opacity=".65">yani kama modülleri 5 mm birbirine çeker.</text>
+      </svg>
+    </div>
+    <figcaption>Sol: MK-02 plakasının alttan görünüşü, iki kanal birbirine yaklaşıyor. Sağ: kamanın yaptığı iş — 50 mm'lik kurs boyunca pim aralığı 5 mm daralıyor, derz 6 mm'den 1 mm'ye iniyor. Konik oran 1:22, yani kama açısı 2,6° — kendiliğinden kilitlenmenin sınırı buradadır.</figcaption>
+  </figure>
+
+  <div class="izgara iki" style="margin-top:20px;">
+    <div class="kart">
+      <h3>MK-01 pim</h3>
+      <dl class="cift">
+        <dt>Cıvata</dt><dd>M8 × 40 mantar başlı A2</dd>
+        <dt>Baş çapı</dt><dd>~20 mm</dd>
+        <dt>Baş altı boşluk</dt><dd>4 mm (ara burçla)</dd>
+        <dt>Altta kalan boy</dt><dd>9 mm</dd>
+        <dt>Tutucu</dt><dd>5 mm paslanmaz lama, M8 diş</dd>
+        <dt>Konum</dt><dd>alt kayıt ekseni, uçlardan 150 mm</dd>
+        <dt>Tork</dt><dd>12 Nm</dd>
+        <dt>Adet</dt><dd>12 + 4 yedek</dd>
+      </dl>
+    </div>
+    <div class="kart">
+      <h3>MK-02 plaka</h3>
+      <dl class="cift">
+        <dt>Malzeme</dt><dd>3 mm 304 paslanmaz</dd>
+        <dt>Dış ölçü</dt><dd>85 × 70 mm + 15 mm dil</dd>
+        <dt>Giriş deliği</dt><dd>Ø22, eksenler 36 mm</dd>
+        <dt>Kanal</dt><dd>9 mm genişlik, 55 mm boy</dd>
+        <dt>Kanal ucu</dt><dd>eksenler 31 mm</dd>
+        <dt>Konik oran</dt><dd>1:22 · 2,6°</dd>
+        <dt>Derz başına</dt><dd>2 plaka (ön + arka)</dd>
+        <dt>Adet</dt><dd>8 (üçlüde 6 gerekiyor)</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="uyari" style="margin-top:20px;">
+    <p class="etiket">Lazere iki farklı açıda kestir</p>
+    <p>Kamanın kendiliğinden kilitlenmesi konik açıya bağlı: çok dik olursa yük altında geri kaçar, çok yatık olursa 50 mm kurs derzi kapatmaya yetmez. <b>1:22 hesapla doğru görünüyor ama denenmedi.</b></p>
+    <p>Bu yüzden F1 siparişinde <b>4 adet 1:22 (2,6°) ve 4 adet 1:15 (3,8°)</b> kestir — maliyeti neredeyse aynı, tek parça fazladan DXF. L adımında hangisinin tuttuğunu deneyerek seç ve kararı yaz; seri üretim paftasına giren sayı o olacak.</p>
+  </div>
+
+  <div class="not" style="margin-top:18px;">
+    <p><b>Neden plaka yerine vida değil:</b> plaka modülleri sadece bir arada tutmuyor, <b>birbirine çekiyor</b> — derzi 1 mm'de kapatan şey kamanın çektiği 5 mm. Vidayla bu olmaz, çünkü vida iki delik arasındaki mesafeyi değiştirmez. Prototipte bu 5 mm'lik çekişi gözle görmek ve kumpasla ölçmek, ürünün "aletsiz ama sıkı" iddiasının tek kanıtı.</p>
+  </div>
+</section>
+
+<section id="orgu" class="sar">
+  <div class="basi">
+    <p class="etiket">Adım G · en uzun iş</p>
+    <h2>Örgü</h2>
+    <p>Dört modülde <b>12 panel, 4,07 m², yaklaşık 552 metre şerit.</b> İşin yarısından fazlası burada geçiyor ve prototipin en değerli çıktısı olan m²/saat sayısı buradan çıkıyor. Şerit 13 mm genişlikte, örgü adımı 16 mm — yani şeritler arasında <b>3 mm boşluk</b> kalıyor. Bu boşluk tasarımın parçası: su akar, yüzey soluk almaz.</p>
+  </div>
+
+  <div class="izgara iki">
+    <figure>
+      <div class="cerceve">
+        <svg viewBox="0 0 300 350" role="img" aria-label="Düz örgü deseni: 13 milimetre genişliğinde şeritler 16 milimetre adımla, aralarında 3 milimetre boşluk; atkılar ve çözgüler birbirinin bir altından bir üstünden geçiyor">
+          <!-- çözgü (dikey, altta) -->
+          <g stroke="currentColor" stroke-width="1">
+            <rect x="20" y="40" width="52" height="256" fill="#C9AC84"/>
+            <rect x="84" y="40" width="52" height="256" fill="#C9AC84"/>
+            <rect x="148" y="40" width="52" height="256" fill="#C9AC84"/>
+            <rect x="212" y="40" width="52" height="256" fill="#C9AC84"/>
+            <!-- atkı (yatay, üstte) -->
+            <rect x="20" y="40" width="244" height="52" fill="#A07E52"/>
+            <rect x="20" y="104" width="244" height="52" fill="#A07E52"/>
+            <rect x="20" y="168" width="244" height="52" fill="#A07E52"/>
+            <rect x="20" y="232" width="244" height="52" fill="#A07E52"/>
+            <!-- çözgünün üste geçtiği kesişimler -->
+            <rect x="20" y="40" width="52" height="52" fill="#C9AC84"/>
+            <rect x="20" y="168" width="52" height="52" fill="#C9AC84"/>
+            <rect x="84" y="104" width="52" height="52" fill="#C9AC84"/>
+            <rect x="84" y="232" width="52" height="52" fill="#C9AC84"/>
+            <rect x="148" y="40" width="52" height="52" fill="#C9AC84"/>
+            <rect x="148" y="168" width="52" height="52" fill="#C9AC84"/>
+            <rect x="212" y="104" width="52" height="52" fill="#C9AC84"/>
+            <rect x="212" y="232" width="52" height="52" fill="#C9AC84"/>
+          </g>
+          <!-- ölçü zinciri -->
+          <g stroke="currentColor" stroke-width="1" opacity=".55">
+            <line x1="20" y1="316" x2="84" y2="316"/>
+            <line x1="20" y1="310" x2="20" y2="322"/>
+            <line x1="72" y1="310" x2="72" y2="322"/>
+            <line x1="84" y1="310" x2="84" y2="322"/>
+          </g>
+          <g font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor">
+            <text x="46" y="334" text-anchor="middle">13</text>
+            <text x="78" y="334" text-anchor="middle" opacity=".7">3</text>
+            <text x="150" y="334">adım 16 mm</text>
+            <text x="20" y="28" opacity=".7">1/1 düz örgü</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Düz örgü (1/1): her atkı, bir çözgünün altından bir üstünden geçer. Koyu şeritler atkı, açık şeritler çözgü.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="cerceve">
+        <svg viewBox="0 0 340 200" role="img" aria-label="Panel çerçevesinin kesiti: şeridin ucu fitil kanalına kıvrılıyor ve içine bastırılan fitil şeridi kanal duvarına sıkıştırıyor">
+          <!-- çerçeve profili -->
+          <rect x="60" y="80" width="150" height="60" style="fill:var(--yuzey2)" stroke="currentColor" stroke-width="2"/>
+          <!-- kanal -->
+          <rect x="118" y="80" width="34" height="38" style="fill:var(--gomulu)" stroke="currentColor" stroke-width="1.6"/>
+          <!-- çapraz şerit (altta) -->
+          <rect x="250" y="58" width="24" height="100" fill="#C9AC84" stroke="currentColor" stroke-width="1"/>
+          <!-- şerit ucu kanala kıvrılıyor -->
+          <polyline points="330,88 150,88 124,112" fill="none" stroke="#A07E52" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- fitil -->
+          <circle cx="140" cy="101" r="12" fill="#7E6340" stroke="currentColor" stroke-width="1.4"/>
+          <!-- etiketler -->
+          <g stroke="currentColor" stroke-width="1" opacity=".55">
+            <line x1="76" y1="46" x2="122" y2="80"/>
+            <line x1="220" y1="46" x2="150" y2="94"/>
+            <line x1="312" y1="62" x2="300" y2="82"/>
+          </g>
+          <g font-family="IBM Plex Mono,monospace" font-size="11.5" fill="currentColor">
+            <text x="60" y="40">kanal 5 × 6</text>
+            <text x="200" y="40">fitil Ø4,5</text>
+            <text x="332" y="56" text-anchor="end">şerit ucu</text>
+            <text x="60" y="172" opacity=".7">fitil kanallı sineklik profili · 25 × 10</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Şeridin ucu 25 mm kanala kıvrılıyor, üstüne bastırılan fitil onu kanal duvarına sıkıştırıyor. Bütün çözgü uçları tek fitil hamlesiyle aynı anda kilitlenir — el örgüsünü mümkün kılan hile bu.</figcaption>
+    </figure>
+  </div>
+
+  <h3 style="margin-top:32px;">Bir paneli örmek — dokuz hamle</h3>
+  <ol class="duz" style="margin-top:14px; font-size:15.5px; max-width:74ch;">
+    <li><b>Kaseti tezgaha yatay sabitle</b>, fitil kanalı yukarı bakacak. İşkenceyle dört köşesinden tut, oynamasın.</li>
+    <li><b>Çözgü şeritlerini kes.</b> Boy = panel yüksekliği + 50 mm (her uca 25 mm fitil payı). <b>Sıcak bıçakla kes</b> — uç erir, saçaklanmaz. Adedi panel listesinde yazılı.</li>
+    <li><b>16 mm'lik tarağı</b> kasetin üstüne koy, çözgüleri çentiklere yerleştir. Tarak olmadan 78 şeridi eşit aralıkta tutmak mümkün değil.</li>
+    <li><b>Üst ve alt kanala fitili makarayla bastır.</b> Bastırırken şeritleri hafif çek — bütün çözgü uçları aynı anda kanalda sıkışır.</li>
+    <li><b>Gerginliği ölç:</b> panelin ortasından parmakla bastır. Hedef, <b>2 kg'lık yükte 5 mm'den az sehim.</b> Gevşekse fitili çıkar, tekrar ger.</li>
+    <li><b>Atkıları geçir</b>, bir alt bir üst (1/1). Her atkıdan sonra tarakla sıkıştır ve 16 mm adımı koru — gözle takip edilmez, tarakla takip edilir.</li>
+    <li><b>Atkı uçlarını yan kanallara al.</b> 40 ucu birden tutamazsın: <b>6–8 atkıda bir</b> ara ver, o bölümün fitilini bastır, devam et.</li>
+    <li><b>Taşan fitili sıcak bıçakla tıraşla</b>, uçları kontrol et. Kanaldan çıkmış tek uç varsa panel zamanla açılır.</li>
+    <li><b>Isı tabancasıyla yüzeyi hafif gez</b> (60–70 °C). PE'nin dokuma sırasında aldığı gevşeme çıkar, örgü sıkılaşır. <b>Önce fire bir parçada dene</b> — 90 °C üstü şeridi deforme eder ve geri dönüşü yok.</li>
+  </ol>
+
+  <div class="not" style="margin-top:20px;">
+    <p><b>Sırayı küçükten büyüğe kur.</b> İlk panel en uzun sürer ve en kötü çıkar — bu normal, öğrenme orada. Bu yüzden ilk örülen <b>P-YK-U (180 × 583)</b> olsun, en son örülen <b>MP-02b (1240 × 665)</b>. En zor paneli en tecrübeli elle örersin. Beğenmediğin ilk paneli sonra söküp tekrar örebilirsin — kaset zaten sökülebilir olduğu için.</p>
+  </div>
+
+  <h3 id="kayit" style="margin-top:34px;">Örgü kayıt defteri</h3>
+  <p style="margin-top:8px; color:var(--soluk); max-width:74ch;">Her panel tipini bitirdiğinde harcadığın toplam süreyi dakika olarak gir. Sayfa m²/saat hesaplıyor ve ÖM-1 makinesinin 5,8 m²/saat hızıyla karşılaştırıyor. <b>Bu tablo prototipin asıl ürünü.</b></p>
+
+  <div class="kaydir" style="margin-top:14px;">
+    <table id="log">
+      <caption>Süreleri gir — m²/saat kendiliğinden hesaplanır</caption>
+      <thead><tr><th>Panel</th><th class="s">Adet</th><th class="s">Alan m²</th><th class="s">Şerit m</th><th class="s">Süre dk</th><th class="s">m²/saat</th></tr></thead>
+      <tbody>
+        <tr data-alan="0.420"><td>P-YK-U · 180 × 583</td><td class="s">4</td><td class="s">0,420</td><td class="s">61</td><td class="s"><input class="dk" id="d1"></td><td class="s" id="h1">—</td></tr>
+        <tr data-alan="1.866"><td>P-YK-Y · 800 × 583</td><td class="s">4</td><td class="s">1,866</td><td class="s">249</td><td class="s"><input class="dk" id="d2"></td><td class="s" id="h2">—</td></tr>
+        <tr data-alan="0.183"><td>MP-01 · 620 × 295</td><td class="s">1</td><td class="s">0,183</td><td class="s">26</td><td class="s"><input class="dk" id="d3"></td><td class="s" id="h3">—</td></tr>
+        <tr data-alan="0.412"><td>MP-02 · 620 × 665</td><td class="s">1</td><td class="s">0,412</td><td class="s">56</td><td class="s"><input class="dk" id="d4"></td><td class="s" id="h4">—</td></tr>
+        <tr data-alan="0.366"><td>MP-01b · 1240 × 295</td><td class="s">1</td><td class="s">0,366</td><td class="s">50</td><td class="s"><input class="dk" id="d5"></td><td class="s" id="h5">—</td></tr>
+        <tr data-alan="0.825"><td>MP-02b · 1240 × 665</td><td class="s">1</td><td class="s">0,825</td><td class="s">110</td><td class="s"><input class="dk" id="d6"></td><td class="s" id="h6">—</td></tr>
+        <tr class="top"><td>Toplam</td><td class="s">12</td><td class="s">4,072</td><td class="s">552</td><td class="s" id="dTop">—</td><td class="s" id="hTop">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ozet">
+    <div class="sat"><span>Girilen toplam süre</span><b id="oSure">—</b></div>
+    <div class="sat"><span>El örgüsü hızı</span><b id="oHiz">—</b></div>
+    <div class="sat"><span>ÖM-1 makinesi (föy değeri)</span><b>5,8 m²/saat</b></div>
+    <div class="sat ana"><span>Makine kaç kat hızlı</span><b id="oKat">süre girilmedi</b></div>
+  </div>
+</section>
+
+<section id="test" class="sar">
+  <div class="basi">
+    <p class="etiket">Adım L · kabul</p>
+    <h2>Sekiz ölçüm</h2>
+    <p>Prototip bitince yapılacak testler. Hiçbiri laboratuvar gerektirmiyor; hepsi atölyede, kumpas, tartı ve kronometre ile yapılır. <b>Sonuçları yaz</b> — yazılmayan ölçüm yapılmamış sayılır.</p>
+  </div>
+
+  <div class="kaydir">
+    <table>
+      <caption>Kabul testleri · sonuç hanesini elle doldur</caption>
+      <thead><tr><th>#</th><th>Test</th><th>Nasıl</th><th>Kabul</th><th class="s">Sonuç</th></tr></thead>
+      <tbody>
+        <tr><td class="k">T1</td><td>Derz ölçüsü</td><td>Üçlü kanepede 3 derzi kumpasla, kilitledikten hemen sonra</td><td>≤ 1,5 mm</td><td class="s">…</td></tr>
+        <tr><td class="k">T2</td><td>Kilit sürünmesi</td><td>3 kişi 1 saat otursun, derzleri tekrar ölç</td><td>artış ≤ 0,3 mm</td><td class="s">…</td></tr>
+        <tr><td class="k">T3</td><td>Statik oturma yükü</td><td>Her oturma birimine 120 kg (kum torbası veya insan), 10 dk</td><td>kalıcı deformasyon yok</td><td class="s">…</td></tr>
+        <tr><td class="k">T4</td><td>Kolçak yan yükü</td><td>Kolçağın üstünden yana ~35 kg yatay çek</td><td>devrilmez, kalıcı eğilme yok</td><td class="s">…</td></tr>
+        <tr><td class="k">T5</td><td>Montaj süresi</td><td>Üçlüyü 5 kez kur–söküp kronometre tut</td><td>5. deneme ≤ 60 sn</td><td class="s">…</td></tr>
+        <tr><td class="k">T6</td><td>Panel değişimi</td><td>Bir sırt panelini sök, tak</td><td>≤ 10 dk, 1 tornavida</td><td class="s">…</td></tr>
+        <tr><td class="k">T7</td><td>Su tahliyesi</td><td>Hortumla 10 dk ısla, 1 saat bekle, minderi kaldır</td><td>sacın üstünde su birikmesi yok</td><td class="s">…</td></tr>
+        <tr><td class="k">T8</td><td>Ağırlık</td><td>Her modülü minderleriyle tart</td><td>YK ≤ 10 · O1 ≤ 9 · O2 ≤ 15 kg</td><td class="s">…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vurgu" style="margin-top:20px;">
+    <p class="etiket">İki hafta daha bekle</p>
+    <p>Testler bittikten sonra prototipi <b>söküp depoya kaldırma.</b> İki hafta dışarıda, kurulu ve yüklü bıraksın — bir oturma biriminin üstünde 80 kg ağırlık dursun. PE şerit zamanla gevşer (creep) ve bu <b>en büyük teknik risk.</b> İki hafta sonra panellerin sehimini tekrar ölç: 5 mm'den fazla arttıysa şerit kalınlığı veya örgü gerginliği yetersiz, seri üretime bu bilgiyle girilir.</p>
+  </div>
+</section>
+
+<section id="risk" class="sar">
+  <div class="basi">
+    <p class="etiket">Nerede tıkanır</p>
+    <h2>Altı risk</h2>
+    <p>Sırayla en olasıdan en az olasıya. Her birinin bir de "ne yaparsan tıkanmazsın" karşılığı var.</p>
+  </div>
+
+  <div class="izgara iki">
+    <div class="kart">
+      <h3>1 · Örgü gevşemesi</h3>
+      <p><b>Risk:</b> PE şerit yük altında zamanla uzar; panel 3 ayda sarkar ve ürün ikinci yazı göremez.</p>
+      <p><b>Ne yap:</b> Örgüden önce 300 × 300 mm'lik bir fire panel ör, iki hafta yük altında bekletip sehimi ölç. Şerit kalınlığını 1,8 değil 2,0 mm seçmek maliyeti çok az artırır, riski belirgin azaltır.</p>
+    </div>
+    <div class="kart">
+      <h3>2 · 1,5 mm cidarda TIG</h3>
+      <p><b>Risk:</b> İnce cidarlı alüminyumda kaynakçı yakar veya çarpıtır; köşegen 2 mm'yi aşarsa kilit hiç tutmaz.</p>
+      <p><b>Ne yap:</b> Kaynakçıdan işe başlamadan <b>iki fire parçayla deneme dikişi</b> isteyin. Punta-ölç-kaynak sırası şart. Çerçeveleri düz bir plaka üstünde, karşılıklı sırayla kaynatın.</p>
+    </div>
+    <div class="kart">
+      <h3>3 · Kama açısı bilinmiyor</h3>
+      <p><b>Risk:</b> 1:22 konik oran hesapla bulundu, denenmedi. Tutmazsa ürünün ana iddiası düşer.</p>
+      <p><b>Ne yap:</b> Lazere <b>iki açıda 4+4 plaka</b> kestir (1:22 ve 1:15). Maliyet aynı, karar deneyle verilir.</p>
+    </div>
+    <div class="kart">
+      <h3>4 · 1240 mm panel çerçevesi bükülür</h3>
+      <p><b>Risk:</b> O2'nin sırt paneli 1240 × 665. Sineklik profili bu boyda örgü gerginliğiyle içe doğru bükülebilir.</p>
+      <p><b>Ne yap:</b> Bu paneli en sona bırak ve örerken çerçevenin ortasına geçici bir destek çıta koy. Bükülme kalıcı olursa çözüm hazır: paneli <b>2 × 620 mm</b> yap — sitenin "tek parça en fazla 1300 mm" sınırının zaten kenarındasın.</p>
+    </div>
+    <div class="kart">
+      <h3>5 · Toz boya ölçü kaçırır</h3>
+      <p><b>Risk:</b> 60–80 µm kaplama, sıkı geçmeleri tutuklaştırır; semer oturmaz, panel kaseti binmez.</p>
+      <p><b>Ne yap:</b> Boyadan sonra kritik ölçüleri kumpasla kontrol et. Dişli delikleri maskeleyerek gönder, perçin somunları boyadan sonra çak.</p>
+    </div>
+    <div class="kart">
+      <h3>6 · Delikli sacın kenarı</h3>
+      <p><b>Risk:</b> 1,5 mm perfore sac kesiği bıçak gibidir; prototipe oturan biri elini keser ve prototip bir kaza hikâyesine dönüşür.</p>
+      <p><b>Ne yap:</b> Dört kenarı 10 mm alta bük veya U profil geçir. Bu adım <b>atlanabilir değil</b>, H adımının ikinci maddesi.</p>
+    </div>
+  </div>
+
+  <div class="uyari" style="margin-top:22px;">
+    <p class="etiket">Prototip bittiğinde siteye dönülecek iki şey</p>
+    <p><b>1 · Gerçek fotoğraflar.</b> Yayındaki görseller Blender render'ı. Üç dizilimin gerçek fotoğrafı çıkınca render'ların yerini alır.</p>
+    <p><b>2 · Durum bölümü.</b> SEKİ sitesi şu an kesin fiyat, "stokta 3 iş günü" teslim ve EN 581-3 deney raporu vaat ediyor — ürün henüz üretilmediği için üçü de karşılanamaz. RATTAMAK sitesinde olduğu gibi dürüst bir "proje durumu" bölümü eklenmeli. Bu prototip, o bölümün <b>"1 · Prototip ✅"</b> satırı oluyor.</p>
+  </div>
+</section>
+
+<footer class="sar">
+  <div class="alt">
+    <span>SEKİ Dış Mekân Mobilya · Prototip yapım kılavuzu</span>
+    <span>SEKİ-PROTO-01 · Rev A · 18 Eylül 2026</span>
+  </div>
+  <p style="margin-top:14px; font-size:13px; color:var(--soluk); max-width:74ch;">Ölçüler ve kilit geometrisi yayındaki ürün verilerinden türetilmiştir; imalata başlamadan önce ürünün kendi teknik paftalarıyla karşılaştırılmalıdır. Fiyatlar 18 Eylül 2026 tarihli kaba tahmindir, teklif niteliği taşımaz. Bu sayfada girilen süre ve fiyat bilgileri yalnızca kendi tarayıcınızda saklanır.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var TL = new Intl.NumberFormat("tr-TR", {maximumFractionDigits:0});
+  var SAY = new Intl.NumberFormat("tr-TR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  var ANAHTAR = "seki-proto-01";
+
+  function oku(){
+    try{ return JSON.parse(localStorage.getItem(ANAHTAR) || "{}") || {}; }
+    catch(e){ return {}; }
+  }
+  function yaz(d){
+    try{ localStorage.setItem(ANAHTAR, JSON.stringify(d)); }catch(e){}
+  }
+  var kayit = oku();
+  function sakla(alan, deger){
+    kayit[alan] = deger;
+    yaz(kayit);
+  }
+
+  /* ---------- adım onayları ---------- */
+  var onaylar = Array.prototype.slice.call(document.querySelectorAll('.onay input[data-o]'));
+  var cubuk = document.getElementById("cubuk");
+  var sayac = document.getElementById("sayac");
+
+  function ilerlemeGuncelle(){
+    var bitti = 0;
+    onaylar.forEach(function(k){
+      var kutu = k.closest(".adim");
+      if(k.checked){ bitti++; if(kutu){ kutu.classList.add("bitti"); } }
+      else if(kutu){ kutu.classList.remove("bitti"); }
+    });
+    var oran = onaylar.length ? (bitti / onaylar.length * 100) : 0;
+    if(cubuk){ cubuk.style.width = oran.toFixed(1) + "%"; }
+    if(sayac){ sayac.textContent = bitti + "/" + onaylar.length; }
+  }
+
+  onaylar.forEach(function(k){
+    var ad = "adim-" + k.getAttribute("data-o");
+    if(kayit[ad] === true){ k.checked = true; }
+    k.addEventListener("change", function(){
+      sakla(ad, k.checked);
+      ilerlemeGuncelle();
+    });
+  });
+  ilerlemeGuncelle();
+
+  /* ---------- malzeme maliyeti ---------- */
+  var satirlar = Array.prototype.slice.call(document.querySelectorAll('#bom tbody tr[data-mik]'));
+  var fasonKodlari = ["f16","f17","f18","f19"];
+
+  function maliyetGuncelle(){
+    var malzeme = 0, fason = 0;
+    satirlar.forEach(function(sat){
+      var girdi = sat.querySelector("input.tl");
+      if(!girdi){ return; }
+      var mik = parseFloat(sat.getAttribute("data-mik")) || 0;
+      var br = parseFloat(String(girdi.value).replace(",", ".")) || 0;
+      var tutar = mik * br;
+      var hucre = document.getElementById("t" + girdi.id.slice(1));
+      if(hucre){ hucre.textContent = tutar ? TL.format(tutar) : "—"; }
+      if(fasonKodlari.indexOf(girdi.id) >= 0){ fason += tutar; } else { malzeme += tutar; }
+    });
+    var toplam = malzeme + fason;
+    document.getElementById("oMalzeme").textContent = TL.format(malzeme) + " ₺";
+    document.getElementById("oFason").textContent = TL.format(fason) + " ₺";
+    document.getElementById("oToplam").textContent = TL.format(toplam) + " ₺";
+    document.getElementById("oModul").textContent = TL.format(toplam / 4) + " ₺";
+  }
+
+  satirlar.forEach(function(sat){
+    var girdi = sat.querySelector("input.tl");
+    if(!girdi){ return; }
+    girdi.setAttribute("inputmode", "decimal");
+    girdi.setAttribute("aria-label", sat.getAttribute("data-ad") + " birim fiyatı");
+    var ad = "fiyat-" + girdi.id;
+    if(typeof kayit[ad] === "string" && kayit[ad] !== ""){ girdi.value = kayit[ad]; }
+    girdi.addEventListener("input", function(){
+      sakla(ad, girdi.value);
+      maliyetGuncelle();
+    });
+  });
+  maliyetGuncelle();
+
+  /* ---------- örgü kayıt defteri ---------- */
+  var logSatir = Array.prototype.slice.call(document.querySelectorAll('#log tbody tr[data-alan]'));
+  var TOPLAM_ALAN = 4.072, MAKINE = 5.8;
+
+  function logGuncelle(){
+    var toplamDk = 0, girilenAlan = 0;
+    logSatir.forEach(function(sat){
+      var girdi = sat.querySelector("input.dk");
+      var alan = parseFloat(sat.getAttribute("data-alan")) || 0;
+      var dk = parseFloat(String(girdi.value).replace(",", ".")) || 0;
+      var hucre = document.getElementById("h" + girdi.id.slice(1));
+      if(dk > 0){
+        toplamDk += dk;
+        girilenAlan += alan;
+        if(hucre){ hucre.textContent = SAY.format(alan / (dk / 60)); }
+      } else if(hucre){
+        hucre.textContent = "—";
+      }
+    });
+    var dTop = document.getElementById("dTop");
+    var hTop = document.getElementById("hTop");
+    var hiz = toplamDk > 0 ? girilenAlan / (toplamDk / 60) : 0;
+    dTop.textContent = toplamDk > 0 ? TL.format(toplamDk) : "—";
+    hTop.textContent = hiz > 0 ? SAY.format(hiz) : "—";
+    document.getElementById("oSure").textContent = toplamDk > 0
+      ? TL.format(toplamDk) + " dk · " + SAY.format(toplamDk / 60) + " saat" : "—";
+    document.getElementById("oHiz").textContent = hiz > 0
+      ? SAY.format(hiz) + " m²/saat" : "—";
+    document.getElementById("oKat").textContent = hiz > 0
+      ? SAY.format(MAKINE / hiz) + "× · tüm örgü makinede " + SAY.format(TOPLAM_ALAN / MAKINE * 60) + " dk sürerdi"
+      : "süre girilmedi";
+  }
+
+  logSatir.forEach(function(sat){
+    var girdi = sat.querySelector("input.dk");
+    girdi.setAttribute("inputmode", "numeric");
+    girdi.setAttribute("placeholder", "dk");
+    girdi.setAttribute("aria-label", sat.cells[0].textContent + " toplam örgü süresi, dakika");
+    var ad = "sure-" + girdi.id;
+    if(typeof kayit[ad] === "string" && kayit[ad] !== ""){ girdi.value = kayit[ad]; }
+    girdi.addEventListener("input", function(){
+      sakla(ad, girdi.value);
+      logGuncelle();
+    });
+  });
+  logGuncelle();
+})();
+</script>
+
+</body>
+</html>
