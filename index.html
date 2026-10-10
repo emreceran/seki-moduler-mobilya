@@ -207,14 +207,14 @@
   <div class="sar ust">
     <a class="logo" href="#ust"><em></em>SEKİ</a>
     <nav>
+      <a href="#galeri">Ürünler</a>
       <a href="#sistem">Sistem</a>
       <a href="#kurucu">Dizilim kurucu</a>
-      <a href="#urunler">Ürünler</a>
-      <a href="#katlanir">Katlanır</a>
+      <a href="#urunler">Fiyatlar</a>
       <a href="#montaj">Montaj</a>
       <a href="#malzeme">Malzeme</a>
       <a href="#horeca">Otel &amp; kafe</a>
-      <a href="elde-yapim.html">Elde yapım</a>
+      <a href="uretim.html">Üretim</a>
       <a href="#iletisim">İletişim</a>
     </nav>
   </div>
@@ -252,6 +252,46 @@
       <div><b>5</b><span>yıl iskelet garantisi<br>10 yıl yedek parça</span></div>
     </div>
   </div>
+
+<!-- GALERI:BAS (urunler/uretim_uret.py üretir, elle düzenlemeyin) -->
+  <section id="galeri" class="sar" style="padding-top:clamp(36px,5vw,64px);">
+    <style>
+  .galeri{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px;}
+  .gkart{background:var(--yuzey); border:1px solid var(--cizgi); padding:10px 10px 14px; display:grid; gap:5px; align-content:start;}
+  .gkart img{display:block; width:100%; height:auto; aspect-ratio:4/3; object-fit:cover; background:var(--yuzey2);}
+  .gkart .kod{font-family:var(--mono); font-size:11.5px; color:var(--vurgu); letter-spacing:.06em; margin-top:6px;}
+  .gkart h3{font-size:17px;}
+  .gkart p{font-size:14.5px; color:var(--soluk);}
+  .gkart small{font-family:var(--mono); font-size:12px; color:var(--soluk);}
+  .gkart a{font-family:var(--disp); font-size:12.5px; font-weight:600; color:var(--vurgu); text-decoration:none; margin-top:4px;}
+  .gkart a:hover{text-decoration:underline;}
+</style>
+    <div class="baslik">
+      <p class="etiket">Ürünler</p>
+      <h2>Bahçe, balkon ve teras için</h2>
+      <p class="olc">Hepsi aynı antrasit iskelet ve kum beji örgüyle yapılıyor; yan yana geldiklerinde takım gibi duruyor. Modüler oturma grubunun dışındaki ürünler tasarım aşamasında, görseller üç boyutlu çizimdir.</p>
+    </div>
+    <div class="galeri">
+      <div class="gkart"><img src="img/uclu-kanepe.jpg" alt="Modüler kanepe" loading="lazy" width="1000" height="750"><span class="kod">RT-MOD</span><h3>Modüler kanepe</h3><p>Üç modülden kurulur, sonradan büyür.</p><small>1600–2220 × 800 × 720 mm</small><a href="#sistem">Sistemi görün →</a></div>
+      <div class="gkart"><img src="img/tekli-koltuk.jpg" alt="Tekli koltuk" loading="lazy" width="1000" height="750"><span class="kod">RT-MOD</span><h3>Tekli koltuk</h3><p>İki kolçak, bir oturma modülü.</p><small>980 × 800 × 720 mm</small><a href="#kurucu">Kendi diziliminizi kurun →</a></div>
+      <div class="gkart"><img src="img/urun/ys-1.jpg" alt="Yan sehpa" loading="lazy" width="1000" height="750"><span class="kod">YS-1</span><h3>Yan sehpa</h3><p>Koltuğun yanına, kahvenin altına.</p><small>400 × 400 × 450 mm</small><a href="uretim.html#ys-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/os-1.jpg" alt="Orta sehpa" loading="lazy" width="1000" height="750"><span class="kod">OS-1</span><h3>Orta sehpa</h3><p>Oturma grubunun ortası, altı raflı.</p><small>900 × 500 × 400 mm</small><a href="uretim.html#os-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/pf-1.jpg" alt="Puf" loading="lazy" width="1000" height="750"><span class="kod">PF-1</span><h3>Puf</h3><p>Tabure, ayak uzatma, fazladan oturak.</p><small>400 × 400 × 450 mm</small><a href="uretim.html#pf-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/ss-1.jpg" alt="Sandalye" loading="lazy" width="1000" height="750"><span class="kod">SS-1</span><h3>Sandalye</h3><p>Katlanmayan, hafif, sağlam.</p><small>460 × 500 × 840 mm</small><a href="uretim.html#ss-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/bk-1.jpg" alt="İkili bank" loading="lazy" width="1000" height="750"><span class="kod">BK-1</span><h3>İkili bank</h3><p>İki kişilik, sırtlı.</p><small>1200 × 500 × 840 mm</small><a href="uretim.html#bk-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/bm-1.jpg" alt="Bistro masa" loading="lazy" width="1000" height="750"><span class="kod">BM-1</span><h3>Bistro masa</h3><p>İki kişilik, sabit ayaklı.</p><small>600 × 600 × 720 mm</small><a href="uretim.html#bm-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/ym-1.jpg" alt="Yemek masası" loading="lazy" width="1000" height="750"><span class="kod">YM-1</span><h3>Yemek masası</h3><p>Altı kişilik, ahşap tablalı, örgü etekli.</p><small>1600 × 900 × 750 mm</small><a href="uretim.html#ym-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/ks-1.jpg" alt="Katlanır sandalye" loading="lazy" width="1000" height="750"><span class="kod">KS-1</span><h3>Katlanır sandalye</h3><p>Oturak kalkar, ayaklar birbirine yatar.</p><small>520 × 491 × 840 mm</small><a href="uretim.html#ks-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/km-1.jpg" alt="Katlanır masa" loading="lazy" width="1000" height="750"><span class="kod">KM-1</span><h3>Katlanır masa</h3><p>Tabla iner, masa duvara yaslanır.</p><small>600 × 600 × 720 mm</small><a href="uretim.html#km-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/bt-1.jpg" alt="Bar taburesi" loading="lazy" width="1000" height="750"><span class="kod">BT-1</span><h3>Bar taburesi</h3><p>Tezgâh ve yüksek masa için.</p><small>420 × 420 × 750 mm</small><a href="uretim.html#bt-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sz-1.jpg" alt="Şezlong" loading="lazy" width="1000" height="750"><span class="kod">SZ-1</span><h3>Şezlong</h3><p>Sırtı üç kademe ayarlı.</p><small>1950 × 650 × 310 mm</small><a href="uretim.html#sz-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sa-1.jpg" alt="Servis arabası" loading="lazy" width="1000" height="750"><span class="kod">SA-1</span><h3>Servis arabası</h3><p>İki raflı, tekerlekli.</p><small>700 × 450 × 820 mm</small><a href="uretim.html#sa-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/rf-1.jpg" alt="Raf" loading="lazy" width="1000" height="750"><span class="kod">RF-1</span><h3>Raf</h3><p>Ayakkabılık, çiçeklik, balkon rafı.</p><small>800 × 320 × 900 mm</small><a href="uretim.html#rf-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sk-3.jpg" alt="Saksılık takımı" loading="lazy" width="1000" height="750"><span class="kod">SK-3</span><h3>Saksılık takımı</h3><p>Üç boy, iç içe taşınır.</p><small>50 / 40 / 30 cm küp</small><a href="uretim.html#sk-3">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sp-1.jpg" alt="Kapaklı sepet" loading="lazy" width="1000" height="750"><span class="kod">SP-1</span><h3>Kapaklı sepet</h3><p>Minder, oyuncak, çamaşır.</p><small>450 × 350 × 550 mm</small><a href="uretim.html#sp-1">Nasıl üretiliyor →</a></div>
+    </div>
+  </section>
+  <!-- GALERI:SON -->
 
   <!-- SİSTEM -->
   <section id="sistem" class="sar">
@@ -589,7 +629,7 @@
     <span>SEKİ Dış Mekân Mobilya · Konya · Modüler oturma sistemi</span>
     <span class="mono">RT-MOD Rev A · fiyatlar 2026 sezonu</span>
   </div>
-  <div class="sar"><p class="kvk">Fiyatlara KDV dahildir. Ölçüler nominal değerlerdir; üretim toleransı ±1 mm. Görseller ürünün ölçekli teknik görünüşleridir. <a href="elde-yapim.html">Elde yapım kılavuzu</a></p></div>
+  <div class="sar"><p class="kvk">Fiyatlara KDV dahildir. Ölçüler nominal değerlerdir; üretim toleransı ±1 mm. Görseller ürünün ölçekli teknik görünüşleridir. <a href="uretim.html">Üretim kılavuzları</a></p></div>
 </footer>
 
 <script>
