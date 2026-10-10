@@ -1,6 +1,6 @@
 # SEKİ — modüler dış mekân oturma sistemi
 
-Tanıtım sitesi. Tek dosya (`index.html`), bağımlılık yok.
+**10 Eki 2026:** ana sayfa artık ürün galerisi + "Nasıl yapılır" menüsü (kaynak projede `vitrin/`). Önceki site `eski/` klasöründe pasif duruyor; aşağıdaki açıklamalar ona aittir.
 Yayın: https://emreceran.github.io/seki-moduler-mobilya
 
 Ürün görselleri Blender ile üretilmiş 3B render'lardır (fotoğraf değildir).

@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEKİ Modüler Oturma</title>
+<meta name="description" content="SEKİ — üç modülden kurulan, aletsiz birleşen, sonradan büyüyen dış mekân oturma sistemi. Konya.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --kagit:#E8E7E0; --yuzey:#F6F5F0; --yuzey2:#DEDCD3; --gomulu:#DAD8CE;
+    --murekkep:#1C201D; --soluk:#5A6059; --cizgi:#CCCAC0;
+    --vurgu:#425C36; --vurgu-ustu:#FFFFFF; --vurgu-yumusak:#DFE6D6;
+    --uyari:#8A5A1E;
+    --disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --govde:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono","DejaVu Sans Mono",monospace;
+    --en:1180px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --kagit:#141614; --yuzey:#1D211E; --yuzey2:#262B27; --gomulu:#101210;
+      --murekkep:#ECEAE2; --soluk:#9AA096; --cizgi:#343933;
+      --vurgu:#A6C68C; --vurgu-ustu:#141A11; --vurgu-yumusak:#232C1F;
+      --uyari:#D6A163;
+    }
+  }
+  :root[data-theme="dark"]{
+    --kagit:#141614; --yuzey:#1D211E; --yuzey2:#262B27; --gomulu:#101210;
+    --murekkep:#ECEAE2; --soluk:#9AA096; --cizgi:#343933;
+    --vurgu:#A6C68C; --vurgu-ustu:#141A11; --vurgu-yumusak:#232C1F;
+    --uyari:#D6A163;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation:none!important; transition:none!important;} }
+  body{
+    margin:0; background:var(--kagit); color:var(--murekkep);
+    font-family:var(--govde); font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sar{width:100%; max-width:var(--en); margin:0 auto; padding-inline:22px;}
+  h1,h2,h3,h4{font-family:var(--disp); font-weight:700; line-height:1.08; letter-spacing:-0.022em; text-wrap:balance; margin:0;}
+  h1{font-size:clamp(38px,6.4vw,70px);}
+  h2{font-size:clamp(26px,3.4vw,38px);}
+  h3{font-size:19px; letter-spacing:-0.01em;}
+  p{margin:0;}
+  a{color:inherit;}
+  .etiket{font-family:var(--disp); font-size:11.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--soluk);}
+  .mono{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+  .sol{color:var(--soluk);}
+  .olc{max-width:64ch;}
+
+  /* ---- üst çubuk ---- */
+  header{position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--kagit) 88%, transparent);
+         backdrop-filter:blur(10px); border-bottom:1px solid var(--cizgi);}
+  .ust{display:flex; align-items:center; gap:26px; height:62px;}
+  .logo{font-family:var(--disp); font-weight:700; font-size:21px; letter-spacing:.2em; text-decoration:none; display:flex; align-items:center; gap:9px;}
+  .logo em{width:11px; height:11px; background:var(--vurgu); display:block;}
+  nav{margin-left:auto; display:flex; gap:20px; flex-wrap:wrap;}
+  nav a{font-family:var(--disp); font-size:13.5px; font-weight:500; text-decoration:none; color:var(--soluk); padding:4px 0; border-bottom:1.5px solid transparent;}
+  nav a:hover{color:var(--murekkep); border-bottom-color:var(--vurgu);}
+  @media (max-width:820px){ nav{display:none;} }
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible{outline:2px solid var(--vurgu); outline-offset:3px; border-radius:2px;}
+
+  /* ---- hero ---- */
+  .hero{padding-block:clamp(38px,6vw,76px) 12px;}
+  .hero-ic{display:grid; gap:26px;}
+  .hero h1{margin-top:14px;}
+  .hero .lead{font-size:clamp(18px,2vw,21px); margin-top:18px; color:var(--murekkep);}
+  .dugmeler{display:flex; gap:12px; flex-wrap:wrap; margin-top:26px;}
+  .btn{font-family:var(--disp); font-size:14.5px; font-weight:600; text-decoration:none; padding:12px 20px; border-radius:2px;
+       border:1.5px solid var(--murekkep); background:var(--murekkep); color:var(--kagit); cursor:pointer; display:inline-block;}
+  .btn.ikincil{background:transparent; color:var(--murekkep);}
+  .btn:hover{background:var(--vurgu); border-color:var(--vurgu); color:var(--vurgu-ustu);}
+  .btn.ikincil:hover{color:var(--vurgu-ustu);}
+
+  .cizimkutu{background:var(--yuzey); border:1px solid var(--cizgi); padding:20px 20px 12px; margin-top:34px;}
+  .cizimkutu svg{display:block; width:100%; height:auto; max-width:100%;}
+  .cizimkutu figcaption{margin-top:10px; padding-top:10px; border-top:1px solid var(--cizgi); display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+                        font-family:var(--mono); font-size:12.5px; color:var(--soluk);}
+
+  .foto{margin:0; background:var(--yuzey); border:1px solid var(--cizgi); padding:10px 10px 6px;}
+  .foto img{display:block; width:100%; height:auto; max-width:100%; background:var(--yuzey2);}
+  .foto figcaption{margin-top:9px; padding-top:9px; border-top:1px solid var(--cizgi); display:flex; justify-content:space-between;
+                   gap:12px; flex-wrap:wrap; font-family:var(--mono); font-size:12.5px; color:var(--soluk);}
+  .foto.buyuk{margin-top:34px; padding:12px 12px 8px;}
+
+  .serit{display:flex; flex-wrap:wrap; gap:0; border-top:1px solid var(--cizgi); border-bottom:1px solid var(--cizgi); margin-top:40px;}
+  .serit div{flex:1 1 160px; padding:16px 18px 16px 0; display:flex; align-items:baseline; gap:10px;}
+  .serit b{font-family:var(--disp); font-size:27px; font-weight:700; letter-spacing:-0.03em; font-variant-numeric:tabular-nums;}
+  .serit span{font-size:14px; color:var(--soluk); line-height:1.35;}
+
+  /* ---- bölüm ---- */
+  section{padding-block:clamp(48px,6vw,86px);}
+  .baslik{display:grid; gap:12px; margin-bottom:34px;}
+  .baslik p{max-width:60ch; color:var(--soluk);}
+
+  /* ---- modül kartları ---- */
+  .uclu{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media (max-width:860px){ .uclu{grid-template-columns:1fr;} }
+  .mkart{background:var(--yuzey); border:1px solid var(--cizgi); padding:18px; display:flex; flex-direction:column; gap:14px;}
+  .mkart .res{background:var(--gomulu); padding:14px; display:flex; align-items:center; justify-content:center;}
+  .mkart .res svg{width:100%; height:auto;}
+  .mkart .kod{font-family:var(--mono); font-size:12px; color:var(--vurgu); letter-spacing:.06em;}
+  .mkart p{font-size:15px; color:var(--soluk);}
+  .mkart dl{margin:auto 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:13.5px; padding-top:12px; border-top:1px solid var(--cizgi);}
+  .mkart dt{color:var(--soluk);}
+  .mkart dd{margin:0; font-family:var(--mono); font-size:12.5px; text-align:right; font-variant-numeric:tabular-nums;}
+
+  .not{border-left:2px solid var(--vurgu); padding:2px 0 2px 16px; margin-top:26px; max-width:70ch;}
+  .not b{font-family:var(--disp);}
+
+  /* ---- kurucu ---- */
+  #kurucu{background:var(--yuzey); border-block:1px solid var(--cizgi);}
+  .kur{display:grid; grid-template-columns:1.45fr 1fr; gap:22px; align-items:start;}
+  @media (max-width:940px){ .kur{grid-template-columns:1fr;} }
+  .sahne{background:var(--gomulu); border:1px solid var(--cizgi); padding:18px; overflow-x:auto;}
+  .sahne svg{display:block; width:100%; min-width:260px; height:auto;}
+  .panel{display:grid; gap:18px;}
+  .grup{display:grid; gap:9px;}
+  .grup > .etiket{margin-bottom:2px;}
+  .sec{display:flex; gap:8px; flex-wrap:wrap;}
+  .cip{font-family:var(--disp); font-size:13.5px; font-weight:600; padding:9px 13px; border:1.5px solid var(--cizgi); background:var(--kagit); color:var(--murekkep); cursor:pointer; border-radius:2px;}
+  .cip:hover{border-color:var(--vurgu);}
+  .cip[aria-pressed="true"]{background:var(--vurgu-yumusak); border-color:var(--vurgu); color:var(--murekkep);}
+  .cip.ekle{border-style:dashed;}
+  .dizi{display:flex; gap:6px; flex-wrap:wrap; min-height:44px; align-content:flex-start;
+        padding:8px; border:1px dashed var(--cizgi); background:var(--kagit);}
+  .dizi:empty::after{content:"Henüz modül yok — aşağıdan ekleyin."; font-size:14px; color:var(--soluk); font-family:var(--govde);}
+  .parca{display:flex; align-items:center; gap:7px; background:var(--vurgu-yumusak); border:1px solid var(--cizgi);
+         padding:5px 7px 5px 10px; font-family:var(--mono); font-size:12.5px;}
+  .parca.yk{background:var(--yuzey2);}
+  .parca button{border:0; background:transparent; color:var(--soluk); cursor:pointer; font-size:15px; line-height:1; padding:2px 3px; font-family:var(--disp);}
+  .parca button:hover{color:var(--uyari);}
+  .ozet{border:1px solid var(--cizgi); background:var(--kagit);}
+  .ozet .satir{display:flex; justify-content:space-between; gap:12px; padding:9px 14px; border-bottom:1px solid var(--cizgi); font-size:14.5px;}
+  .ozet .satir:last-child{border-bottom:0;}
+  .ozet .satir span:last-child{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+  .ozet .fiyat{background:var(--vurgu-yumusak); align-items:baseline;}
+  .ozet .fiyat span:last-child{font-family:var(--disp); font-weight:700; font-size:23px; letter-spacing:-0.02em;}
+  .rozet{font-size:13.5px; color:var(--soluk); padding:10px 14px; border-top:1px solid var(--cizgi); display:block;}
+  .rozet b{color:var(--vurgu); font-family:var(--disp);}
+  .renkler{display:flex; gap:8px;}
+  .renk{display:flex; align-items:center; gap:8px; font-family:var(--disp); font-size:13px; font-weight:600; padding:7px 12px 7px 8px; border:1.5px solid var(--cizgi); background:var(--kagit); cursor:pointer;}
+  .renk i{width:18px; height:18px; display:block; border:1px solid rgba(0,0,0,.25);}
+  .renk[aria-pressed="true"]{border-color:var(--vurgu); background:var(--vurgu-yumusak);}
+
+  /* ---- ürünler ---- */
+  table.fiyat{width:100%; border-collapse:collapse; font-size:15px;}
+  .kaydir{overflow-x:auto; border:1px solid var(--cizgi); background:var(--yuzey);}
+  table.fiyat th, table.fiyat td{padding:13px 16px; text-align:left; border-bottom:1px solid var(--cizgi); white-space:nowrap;}
+  table.fiyat th{font-family:var(--disp); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--soluk); font-weight:600;}
+  table.fiyat td.ad{font-family:var(--disp); font-weight:600; white-space:normal; min-width:180px;}
+  table.fiyat td.m{font-family:var(--mono); font-size:13px; color:var(--soluk); font-variant-numeric:tabular-nums;}
+  table.fiyat td.tl{font-family:var(--mono); font-weight:500; text-align:right; font-variant-numeric:tabular-nums;}
+  table.fiyat tr:last-child td{border-bottom:0;}
+  table.fiyat tr.set td{background:var(--vurgu-yumusak);}
+  .ikili{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:860px){ .ikili{grid-template-columns:1fr;} }
+
+  /* ---- adımlar ---- */
+  .adimlar{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; counter-reset:a;}
+  @media (max-width:860px){ .adimlar{grid-template-columns:1fr;} }
+  .adim{display:grid; gap:9px; align-content:start;}
+  .adim .no{font-family:var(--mono); font-size:12px; color:var(--vurgu); letter-spacing:.1em;}
+  .adim p{font-size:15px; color:var(--soluk);}
+
+  /* ---- özellik listesi ---- */
+  .ozellik{display:grid; grid-template-columns:repeat(2,1fr); gap:0 36px;}
+  @media (max-width:760px){ .ozellik{grid-template-columns:1fr;} }
+  .ozellik div{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid var(--cizgi); font-size:15px;}
+  .ozellik dt, .ozellik span:first-child{color:var(--soluk);}
+  .ozellik span:last-child{font-family:var(--mono); font-size:13px; text-align:right; font-variant-numeric:tabular-nums;}
+
+  .paletler{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px;}
+  .palet{display:grid; gap:7px; width:140px;}
+  .palet i{display:block; height:62px; border:1px solid var(--cizgi);}
+  .palet b{font-family:var(--disp); font-size:13.5px;}
+  .palet small{font-family:var(--mono); font-size:11.5px; color:var(--soluk);}
+
+  /* ---- horeca ---- */
+  #horeca{background:var(--murekkep); color:var(--kagit);}
+  #horeca h2, #horeca .etiket{color:var(--kagit);}
+  #horeca .etiket{opacity:.62;}
+  #horeca p{color:color-mix(in srgb, var(--kagit) 76%, transparent);}
+  #horeca .ozellik div{border-bottom-color:color-mix(in srgb, var(--kagit) 22%, transparent);}
+  #horeca .ozellik span:first-child{color:color-mix(in srgb, var(--kagit) 66%, transparent);}
+  #horeca .btn{border-color:var(--kagit); background:var(--kagit); color:var(--murekkep);}
+  #horeca .btn:hover{background:var(--vurgu); border-color:var(--vurgu); color:#FFF;}
+
+  /* ---- iletişim ---- */
+  .iletisim{display:grid; grid-template-columns:1fr 1fr; gap:26px;}
+  @media (max-width:860px){ .iletisim{grid-template-columns:1fr;} }
+  .kart{background:var(--yuzey); border:1px solid var(--cizgi); padding:22px; display:grid; gap:12px; align-content:start;}
+  .kart a.bag{font-family:var(--mono); font-size:15px; color:var(--vurgu); text-decoration:none; border-bottom:1px solid var(--vurgu);}
+  footer{border-top:1px solid var(--cizgi); padding-block:28px 40px; font-size:13.5px; color:var(--soluk);}
+  footer .alt{display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap;}
+  .kvk{font-size:12.5px; color:var(--soluk); margin-top:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="sar ust">
+    <a class="logo" href="#ust"><em></em>SEKİ</a>
+    <nav>
+      <a href="#galeri">Ürünler</a>
+      <a href="#sistem">Sistem</a>
+      <a href="#kurucu">Dizilim kurucu</a>
+      <a href="#urunler">Fiyatlar</a>
+      <a href="#montaj">Montaj</a>
+      <a href="#malzeme">Malzeme</a>
+      <a href="#horeca">Otel &amp; kafe</a>
+      <a href="uretim.html">Üretim</a>
+      <a href="#iletisim">İletişim</a>
+    </nav>
+  </div>
+</header>
+
+<main id="ust">
+
+  <!-- HERO -->
+  <div class="hero sar">
+    <div class="hero-ic">
+      <div>
+        <p class="etiket">Modüler dış mekân oturma sistemi · Konya</p>
+        <h1>Üç modül.<br>Bütün bir bahçe.</h1>
+        <p class="lead olc">SEKİ koltukları tek parça değil. 180 mm'lik kolçak, 620 mm'lik tekli ve 1240 mm'lik ikili oturma modüllerinden kuruluyor. Aletsiz birleşiyor, taşırken ayrılıyor, gelecek yaz büyüyor.</p>
+        <div class="dugmeler">
+          <a class="btn" href="#kurucu">Kendi dizilimini kur</a>
+          <a class="btn ikincil" href="#urunler">Ürünler ve fiyatlar</a>
+        </div>
+      </div>
+
+      <figure class="foto buyuk">
+        <img src="img/uclu-kanepe.jpg" width="1600" height="1000" style="aspect-ratio:8/5"
+             alt="SEKİ üçlü kanepe: kum beji örgü panelli, antrasit alüminyum iskeletli modüler kanepe, taş terasta">
+        <figcaption>
+          <span>Üçlü kanepe · YK + O2 + O1 + YK</span>
+          <span>2220 × 800 × 720 mm · oturma 440 mm</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="serit">
+      <div><b>3</b><span>modül tipi<br>bütün ürünleri kuruyor</span></div>
+      <div><b>1</b><span>dakikada<br>aletsiz birleşiyor</span></div>
+      <div><b>9–15</b><span>kg modül ağırlığı<br>tek kişi taşıyor</span></div>
+      <div><b>5</b><span>yıl iskelet garantisi<br>10 yıl yedek parça</span></div>
+    </div>
+  </div>
+
+<!-- GALERI:BAS (urunler/uretim_uret.py üretir, elle düzenlemeyin) -->
+  <section id="galeri" class="sar" style="padding-top:clamp(36px,5vw,64px);">
+    <style>
+  .galeri{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px;}
+  .gkart{background:var(--yuzey); border:1px solid var(--cizgi); padding:10px 10px 14px; display:grid; gap:5px; align-content:start;}
+  .gkart img{display:block; width:100%; height:auto; aspect-ratio:4/3; object-fit:cover; background:var(--yuzey2);}
+  .gkart .kod{font-family:var(--mono); font-size:11.5px; color:var(--vurgu); letter-spacing:.06em; margin-top:6px;}
+  .gkart h3{font-size:17px;}
+  .gkart p{font-size:14.5px; color:var(--soluk);}
+  .gkart small{font-family:var(--mono); font-size:12px; color:var(--soluk);}
+  .gkart a{font-family:var(--disp); font-size:12.5px; font-weight:600; color:var(--vurgu); text-decoration:none; margin-top:4px;}
+  .gkart a:hover{text-decoration:underline;}
+</style>
+    <div class="baslik">
+      <p class="etiket">Ürünler</p>
+      <h2>Bahçe, balkon ve teras için</h2>
+      <p class="olc">Hepsi aynı antrasit iskelet ve kum beji örgüyle yapılıyor; yan yana geldiklerinde takım gibi duruyor. Modüler oturma grubunun dışındaki ürünler tasarım aşamasında, görseller üç boyutlu çizimdir.</p>
+    </div>
+    <div class="galeri">
+      <div class="gkart"><img src="img/uclu-kanepe.jpg" alt="Modüler kanepe" loading="lazy" width="1000" height="750"><span class="kod">RT-MOD</span><h3>Modüler kanepe</h3><p>Üç modülden kurulur, sonradan büyür.</p><small>1600–2220 × 800 × 720 mm</small><a href="#sistem">Sistemi görün →</a></div>
+      <div class="gkart"><img src="img/tekli-koltuk.jpg" alt="Tekli koltuk" loading="lazy" width="1000" height="750"><span class="kod">RT-MOD</span><h3>Tekli koltuk</h3><p>İki kolçak, bir oturma modülü.</p><small>980 × 800 × 720 mm</small><a href="#kurucu">Kendi diziliminizi kurun →</a></div>
+      <div class="gkart"><img src="img/urun/ys-1.jpg" alt="Yan sehpa" loading="lazy" width="1000" height="750"><span class="kod">YS-1</span><h3>Yan sehpa</h3><p>Koltuğun yanına, kahvenin altına.</p><small>400 × 400 × 450 mm</small><a href="uretim.html#ys-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/os-1.jpg" alt="Orta sehpa" loading="lazy" width="1000" height="750"><span class="kod">OS-1</span><h3>Orta sehpa</h3><p>Oturma grubunun ortası, altı raflı.</p><small>900 × 500 × 400 mm</small><a href="uretim.html#os-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/pf-1.jpg" alt="Puf" loading="lazy" width="1000" height="750"><span class="kod">PF-1</span><h3>Puf</h3><p>Tabure, ayak uzatma, fazladan oturak.</p><small>400 × 400 × 450 mm</small><a href="uretim.html#pf-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/ss-1.jpg" alt="Sandalye" loading="lazy" width="1000" height="750"><span class="kod">SS-1</span><h3>Sandalye</h3><p>Katlanmayan, hafif, sağlam.</p><small>460 × 500 × 840 mm</small><a href="uretim.html#ss-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/bk-1.jpg" alt="İkili bank" loading="lazy" width="1000" height="750"><span class="kod">BK-1</span><h3>İkili bank</h3><p>İki kişilik, sırtlı.</p><small>1200 × 500 × 840 mm</small><a href="uretim.html#bk-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/bm-1.jpg" alt="Bistro masa" loading="lazy" width="1000" height="750"><span class="kod">BM-1</span><h3>Bistro masa</h3><p>İki kişilik, sabit ayaklı.</p><small>600 × 600 × 720 mm</small><a href="uretim.html#bm-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/ym-1.jpg" alt="Yemek masası" loading="lazy" width="1000" height="750"><span class="kod">YM-1</span><h3>Yemek masası</h3><p>Altı kişilik, ahşap tablalı, örgü etekli.</p><small>1600 × 900 × 750 mm</small><a href="uretim.html#ym-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/ks-1.jpg" alt="Katlanır sandalye" loading="lazy" width="1000" height="750"><span class="kod">KS-1</span><h3>Katlanır sandalye</h3><p>Oturak kalkar, ayaklar birbirine yatar.</p><small>520 × 491 × 840 mm</small><a href="uretim.html#ks-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/km-1.jpg" alt="Katlanır masa" loading="lazy" width="1000" height="750"><span class="kod">KM-1</span><h3>Katlanır masa</h3><p>Tabla iner, masa duvara yaslanır.</p><small>600 × 600 × 720 mm</small><a href="uretim.html#km-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/bt-1.jpg" alt="Bar taburesi" loading="lazy" width="1000" height="750"><span class="kod">BT-1</span><h3>Bar taburesi</h3><p>Tezgâh ve yüksek masa için.</p><small>420 × 420 × 750 mm</small><a href="uretim.html#bt-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sz-1.jpg" alt="Şezlong" loading="lazy" width="1000" height="750"><span class="kod">SZ-1</span><h3>Şezlong</h3><p>Sırtı üç kademe ayarlı.</p><small>1950 × 650 × 310 mm</small><a href="uretim.html#sz-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sa-1.jpg" alt="Servis arabası" loading="lazy" width="1000" height="750"><span class="kod">SA-1</span><h3>Servis arabası</h3><p>İki raflı, tekerlekli.</p><small>700 × 450 × 820 mm</small><a href="uretim.html#sa-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/rf-1.jpg" alt="Raf" loading="lazy" width="1000" height="750"><span class="kod">RF-1</span><h3>Raf</h3><p>Ayakkabılık, çiçeklik, balkon rafı.</p><small>800 × 320 × 900 mm</small><a href="uretim.html#rf-1">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sk-3.jpg" alt="Saksılık takımı" loading="lazy" width="1000" height="750"><span class="kod">SK-3</span><h3>Saksılık takımı</h3><p>Üç boy, iç içe taşınır.</p><small>50 / 40 / 30 cm küp</small><a href="uretim.html#sk-3">Nasıl üretiliyor →</a></div>
+      <div class="gkart"><img src="img/urun/sp-1.jpg" alt="Kapaklı sepet" loading="lazy" width="1000" height="750"><span class="kod">SP-1</span><h3>Kapaklı sepet</h3><p>Minder, oyuncak, çamaşır.</p><small>450 × 350 × 550 mm</small><a href="uretim.html#sp-1">Nasıl üretiliyor →</a></div>
+    </div>
+  </section>
+  <!-- GALERI:SON -->
+
+  <!-- SİSTEM -->
+  <section id="sistem" class="sar">
+    <div class="baslik">
+      <p class="etiket">Sistem</p>
+      <h2>Sol kolçak, sağ kolçak diye bir şey yok</h2>
+      <p class="olc">Bütün modüllerin yan yüzleri birbirinin aynı. Kolçak simetrik: aynı parça sola da sağa da takılıyor. Bu yüzden stokta iki değil tek kolçak kodu var, sizde de yanlış tarafı alma ihtimali yok.</p>
+    </div>
+
+    <div class="uclu">
+      <article class="mkart">
+        <div class="res" id="res-yk"></div>
+        <div>
+          <p class="kod">MODÜL YK</p>
+          <h3>Kolçak modülü</h3>
+        </div>
+        <p>Simetrik. İçi ve dışı aynı örgü panel, üstü HPL compact kapak. Kullanılmayan yüzdeki bağlantı pimleri altta kalır, görünmez.</p>
+        <dl>
+          <dt>Ölçü</dt><dd>180 × 800 × 620</dd>
+          <dt>Ağırlık</dt><dd>~10 kg</dd>
+          <dt>Fiyat</dt><dd>4.500 ₺</dd>
+        </dl>
+      </article>
+
+      <article class="mkart">
+        <div class="res" id="res-o1"></div>
+        <div>
+          <p class="kod">MODÜL O1</p>
+          <h3>Tekli oturma modülü</h3>
+        </div>
+        <p>Bir kişilik. Delikli alüminyum oturma sacı suyu geçirir, minder altında göl olmaz. Ön ve sırt paneli modül genişliğini tam kaplar.</p>
+        <dl>
+          <dt>Ölçü</dt><dd>620 × 800 × 720</dd>
+          <dt>Ağırlık</dt><dd>~9 kg</dd>
+          <dt>Fiyat</dt><dd>9.500 ₺</dd>
+        </dl>
+      </article>
+
+      <article class="mkart">
+        <div class="res" id="res-o2"></div>
+        <div>
+          <p class="kod">MODÜL O2</p>
+          <h3>İkili oturma modülü</h3>
+        </div>
+        <p>İki kişilik tek gövde: daha az derz, daha hızlı montaj. Ortasında dikme var, sırt 1240 mm'de esnemiyor. Minderleri O1 ile aynı.</p>
+        <dl>
+          <dt>Ölçü</dt><dd>1240 × 800 × 720</dd>
+          <dt>Ağırlık</dt><dd>~15 kg</dd>
+          <dt>Fiyat</dt><dd>17.500 ₺</dd>
+        </dl>
+      </article>
+    </div>
+
+    <figure class="cizimkutu" style="margin-top:22px;">
+      <div id="hero-cizim"></div>
+      <figcaption>
+        <span>Üçlü kanepe · ölçekli görünüş · YK + O2 + O1 + YK</span>
+        <span>2220 × 800 × 720 mm · oturma 440 mm</span>
+      </figcaption>
+    </figure>
+
+    <p class="not"><b>Neden 2220 mm'nin üstünde tek gövde yoktur:</b> örgü panelini tek parça 1300 mm'ye kadar dokuyoruz. Üçlü kanepe bu yüzden O2 + O1 olarak kuruluyor — kolisi asansöre giriyor, bir paneli yırtılınca kanepenin tamamı değil o panel değişiyor.</p>
+  </section>
+
+  <!-- KURUCU -->
+  <section id="kurucu">
+    <div class="sar">
+      <div class="baslik">
+        <p class="etiket">Dizilim kurucu</p>
+        <h2>Kendi kanepenizi dizin</h2>
+        <p class="olc">Modülleri ekleyin, genişlik ve fiyat anında hesaplansın. Dizildiği gibi üretiyoruz; sonradan modül eklemek için baştan almanız gerekmiyor.</p>
+      </div>
+
+      <div class="kur">
+        <div class="sahne"><div id="sahne-cizim"></div></div>
+
+        <div class="panel">
+          <div class="grup">
+            <p class="etiket">Hazır diziliş</p>
+            <div class="sec" id="hazir"></div>
+          </div>
+
+          <div class="grup">
+            <p class="etiket">Diziliminiz</p>
+            <div class="dizi" id="dizi"></div>
+            <div class="sec">
+              <button class="cip ekle" type="button" data-ekle="O1">+ Tekli modül</button>
+              <button class="cip ekle" type="button" data-ekle="O2">+ İkili modül</button>
+              <button class="cip" type="button" id="kolcak" aria-pressed="true">İki yanda kolçak</button>
+            </div>
+          </div>
+
+          <div class="grup">
+            <p class="etiket">Örgü rengi</p>
+            <div class="renkler" id="renkler"></div>
+          </div>
+
+          <div class="ozet" id="ozet"></div>
+
+          <div class="sec">
+            <button class="btn" type="button" id="kopyala">Dizilimi kopyala</button>
+            <a class="btn ikincil" href="#iletisim">Teklif iste</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ÜRÜNLER -->
+  <section id="urunler" class="sar">
+    <div class="baslik">
+      <p class="etiket">Ürünler</p>
+      <h2>Hazır dizilimler</h2>
+      <p class="olc">Fiyatlara minderler (oturma + sırt), kaymaz ayaklar ve kilit plakaları dahildir. Türkiye'de montajlı teslim, KDV dahil.</p>
+    </div>
+
+    <div class="kaydir">
+      <table class="fiyat">
+        <thead>
+          <tr><th>Ürün</th><th>Modüller</th><th>Genişlik</th><th>Minder</th><th style="text-align:right">Fiyat</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="ad">Tekli koltuk</td><td class="m">YK + O1 + YK</td><td class="m">980 mm</td><td class="m">1 + 1</td><td class="tl">17.900 ₺</td></tr>
+          <tr><td class="ad">İkili kanepe</td><td class="m">YK + O2 + YK</td><td class="m">1600 mm</td><td class="m">2 + 2</td><td class="tl">25.900 ₺</td></tr>
+          <tr><td class="ad">Üçlü kanepe</td><td class="m">YK + O2 + O1 + YK</td><td class="m">2220 mm</td><td class="m">3 + 3</td><td class="tl">34.900 ₺</td></tr>
+          <tr><td class="ad">Kolçaksız ada</td><td class="m">O2</td><td class="m">1240 mm</td><td class="m">2 + 2</td><td class="tl">16.900 ₺</td></tr>
+          <tr><td class="ad">Sehpa modülü</td><td class="m">SM</td><td class="m">620 × 800 mm</td><td class="m">—</td><td class="tl">6.900 ₺</td></tr>
+          <tr class="set"><td class="ad">Beş kişilik set<br><span class="sol" style="font-family:var(--govde); font-weight:400; font-size:14px;">Üçlü kanepe + 2 tekli koltuk + sehpa</span></td><td class="m">6 YK + 3 O1 + 1 O2 + SM</td><td class="m">—</td><td class="m">5 + 5</td><td class="tl">72.900 ₺</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ikili" style="margin-top:22px;">
+      <figure class="foto">
+        <img loading="lazy" src="img/tekli-koltuk.jpg" width="1280" height="853" style="aspect-ratio:3/2"
+             alt="SEKİ tekli koltuk ve yanında sehpa modülü">
+        <figcaption><span>Tekli koltuk · 980 mm</span><span>17.900 ₺</span></figcaption>
+      </figure>
+      <figure class="foto">
+        <img loading="lazy" src="img/moduler-dizilim.jpg" width="1280" height="853" style="aspect-ratio:3/2"
+             alt="Kolçaksız ada ve tekli koltuk, sehpayla birlikte oturma grubu">
+        <figcaption><span>Kolçaksız ada + tekli koltuk</span><span>16.900 ₺ + 17.900 ₺</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="ikili" style="margin-top:26px;">
+      <div>
+        <h3 style="margin-bottom:12px;">Tek tek modül</h3>
+        <div class="ozellik" style="grid-template-columns:1fr;">
+          <div><span>Kolçak modülü (YK)</span><span>4.500 ₺</span></div>
+          <div><span>Tekli oturma modülü (O1) + minder</span><span>9.500 ₺</span></div>
+          <div><span>İkili oturma modülü (O2) + 2 minder</span><span>17.500 ₺</span></div>
+          <div><span>V-kama kilit plakası (2'li, yedek)</span><span>180 ₺</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:12px;">Yedek parça — 10 yıl</h3>
+        <div class="ozellik" style="grid-template-columns:1fr;">
+          <div><span>Ön panel · MP-01 · 620 × 300</span><span>1.450 ₺</span></div>
+          <div><span>Sırt paneli · MP-02 · 620 × 670</span><span>2.250 ₺</span></div>
+          <div><span>Yan panel · MP-05 · 800 × 600</span><span>2.100 ₺</span></div>
+          <div><span>Oturma minderi · 620 × 730 × 120</span><span>1.850 ₺</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="not"><b>Yolda:</b> köşe modülü (KÖ), puf ve şezlong uzatması (PF), kolçaksız kullanım için yan kapama paneli — 2027 ilkbaharı. Hepsi bugün aldığınız modüllere aynı kilitle takılıyor.</p>
+  </section>
+
+<!-- KATLANIR:BAS (elde-yapim/katlanir.py üretir, elle düzenlemeyin) -->
+  <section id="katlanir" class="sar" style="border-top:1px solid var(--cizgi);">
+    <style>
+  #katlanir .res svg{width:100%; height:auto; display:block;}
+  #katlanir .g-isk{fill:var(--yuzey2); stroke:var(--murekkep); stroke-width:1.2;}
+  #katlanir .g-isk2{fill:var(--cizgi); stroke:var(--murekkep); stroke-width:1.2;}
+  #katlanir .g-pan{fill:var(--vurgu-yumusak); stroke:var(--vurgu); stroke-width:1.4;}
+  #katlanir .g-tak{fill:var(--yuzey2); stroke:var(--murekkep); stroke-width:1;}
+  #katlanir .g-civ{fill:var(--murekkep);}
+  #katlanir .g-olc{stroke:var(--soluk); stroke-width:.9;}
+</style>
+    <div class="baslik">
+      <p class="etiket">Katlanır seri · yakında</p>
+      <h2>Balkona sığan, kışın kaldırılan</h2>
+      <p class="olc">Aynı örgü, aynı antrasit iskelet, katlanan gövde. İki sandalye ve bir masa dar bir balkonu kahvaltı köşesine çeviriyor, kullanılmadığında duvara yaslanıyor.</p>
+    </div>
+    <div class="ikili">
+      <div class="mkart">
+        <div class="res"><svg viewBox="0 0 520 400" role="img" aria-label="Katlanır sandalye yandan görünüş" ><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><line class="g-olc" x1="20" y1="380" x2="500" y2="380"/><polygon class="g-isk2" points="326.5,384 129.1,211.3 136.1,203.4 333.5,376"/><rect class="g-pan" x="120" y="191" width="159.6" height="10.1"/><rect class="g-tak" x="128.4" y="201.1" width="8.4" height="10.9"/><rect class="g-tak" x="266.6" y="201.1" width="2.1" height="6.7"/><rect class="g-tak" x="277.9" y="201.1" width="2.1" height="6.7"/><circle class="g-civ" cx="132.6" cy="207.4" r="1.9"/><polygon class="g-isk" points="132.7,376.8 269.2,202 277.4,208.5 140.9,383.2"/><polygon class="g-isk" points="268.2,203.9 315.9,25.8 326.1,28.6 278.4,206.6"/><rect class="g-isk2" x="285.4" y="140.2" width="8.4" height="8.4"/><rect class="g-isk2" x="314.6" y="31.1" width="8.4" height="8.4"/><polygon class="g-pan" points="284.8,144.2 314,35 316.1,35.6 286.8,144.7"/><rect class="g-isk2" x="269.1" y="201.1" width="8.4" height="8.4"/><circle class="g-civ" cx="215.2" cy="279.6" r="1.9"/></svg></div>
+        <p class="kod">KS-1</p>
+        <h3>Katlanır sandalye</h3>
+        <p>Örgü oturak ve sırt. Oturak kalkar, ayaklar birbirine yatar.</p>
+        <dl><dt>Ölçü</dt><dd>520 × 491 × 840 mm</dd><dt>Oturma</dt><dd>450 mm</dd><dt>Katlı kalınlık</dt><dd>~300 mm</dd><dt>Fiyat</dt><dd>ilk üretimle açıklanacak</dd></dl>
+      </div>
+      <div class="mkart">
+        <div class="res"><svg viewBox="0 0 520 400" role="img" aria-label="Katlanır masa yandan görünüş" ><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><line class="g-olc" x1="20" y1="340" x2="500" y2="340"/><polygon class="g-isk2" points="352.5,343 155.1,57 163.7,51 361.1,337"/><polygon class="g-isk" points="150.9,337 348.3,48.9 356.9,54.8 159.5,343"/><rect class="g-isk2" x="348.4" y="47.7" width="8.4" height="8.4"/><rect class="g-pan" x="130" y="37.6" width="252" height="10.1"/><rect class="g-tak" x="155.2" y="47.7" width="8.4" height="10.9"/><rect class="g-tak" x="345.9" y="47.7" width="2.1" height="6.7"/><rect class="g-tak" x="357.2" y="47.7" width="2.1" height="6.7"/><circle class="g-civ" cx="159.4" cy="54" r="1.9"/><circle class="g-civ" cx="255.6" cy="193.4" r="1.9"/></svg></div>
+        <p class="kod">KM-1</p>
+        <h3>Katlanır masa</h3>
+        <p>İki kişilik örgü tabla. Tabla ayakların yanına iner, masa duvara yaslanır.</p>
+        <dl><dt>Ölçü</dt><dd>600 × 600 × 720 mm</dd><dt>Katlı</dt><dd>~910 × 600 × 110 mm</dd><dt>Kişi</dt><dd>2</dd><dt>Fiyat</dt><dd>ilk üretimle açıklanacak</dd></dl>
+      </div>
+    </div>
+    <p class="not"><b>Durum:</b> katlanır seri tasarım aşamasında, ilk örnekler elde yapılacak. Yapım kılavuzu: <a href="katlanir-yapim.html">katlanır sandalye ve masa</a>.</p>
+  </section>
+  <!-- KATLANIR:SON -->
+
+  <!-- MONTAJ -->
+  <section id="montaj" class="sar" style="border-top:1px solid var(--cizgi);">
+    <div class="baslik">
+      <p class="etiket">Montaj</p>
+      <h2>Alttan kayan bir plaka, bir dakika</h2>
+      <p class="olc">Modülleri birbirine bağlayan parça alt rayın altındaki iki mantar başlı pim ile paslanmaz V-kama plakası. Vida yok, alet yok, taşınırken sökülüyor.</p>
+    </div>
+
+    <div class="cizimkutu" style="margin-top:0;">
+      <div id="kilit-cizim"></div>
+      <figcaption>
+        <span>MK-01 pim + MK-02 V-kama kilit plakası · alttan görünüş</span>
+        <span>Derz başına 2 plaka · kurs 50 mm · derz 1 mm</span>
+      </figcaption>
+    </div>
+
+    <div class="adimlar" style="margin-top:34px;">
+      <div class="adim">
+        <p class="no">ADIM 01</p>
+        <h3>Modülleri yan yana itin</h3>
+        <p>Aralarında birkaç milimetre boşluk kalması sorun değil. Kolçak hangi tarafa gelirse gelsin aynı parça.</p>
+      </div>
+      <div class="adim">
+        <p class="no">ADIM 02</p>
+        <h3>Plakayı pimlere geçirin</h3>
+        <p>Plakanın iki geniş deliği pim başlarına alttan oturur. Eğilmenize gerek yok, tutamak dili elinize gelir.</p>
+      </div>
+      <div class="adim">
+        <p class="no">ADIM 03</p>
+        <h3>50 mm kaydırın, "tık"</h3>
+        <p>Daralan kanal iki modülü birbirine çeker, derz 1 mm'ye iner. Kama kendiliğinden kilitlenir; yük altında geri kaçmaz.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MALZEME -->
+  <section id="malzeme" class="sar" style="border-top:1px solid var(--cizgi);">
+    <div class="baslik">
+      <p class="etiket">Malzeme</p>
+      <h2>Dışarıda bırakılmak üzere yapıldı</h2>
+      <p class="olc">Bahçe mobilyasında en sık şikâyet iki yılda kopan örgü, küflenen minder ve bulunamayan yedek parça. SEKİ'nin üç cevabı: alüminyum, UV katkılı şerit ve panel panel değişebilen bir gövde.</p>
+    </div>
+
+    <figure class="foto" style="margin-bottom:30px;">
+      <img loading="lazy" src="img/orgu-detay.jpg" width="1280" height="853" style="aspect-ratio:3/2"
+           alt="Örgü panelin yakın planı: birbirinin üstünden geçen PE şeritler, kolçak HPL kapağı ve modül derzi">
+      <figcaption><span>Örgü panel · kolçak HPL kapağı · modül derzi</span><span>şerit 13 mm · örgü adımı 16 mm</span></figcaption>
+    </figure>
+
+    <div class="ozellik">
+      <div><span>İskelet</span><span>30 × 30 × 1,5 mm 6063-T5 alüminyum, toz boyalı</span></div>
+      <div><span>Örgü</span><span>UV katkılı PE şerit, yarı yuvarlak, 2,12 kg/m²</span></div>
+      <div><span>Panel çerçevesi</span><span>Fitil kanallı alüminyum, panel sökülebilir</span></div>
+      <div><span>Oturma tabanı</span><span>1,5 mm delikli alüminyum sac, Ø8 delik</span></div>
+      <div><span>Kolçak üstü</span><span>12 mm HPL compact, dış mekân sınıfı</span></div>
+      <div><span>Bağlantı</span><span>A2 paslanmaz pim + 3 mm paslanmaz kilit plakası</span></div>
+      <div><span>Ayak</span><span>M8 ayarlı, kaymaz TPE taban, 20–35 mm</span></div>
+      <div><span>Minder</span><span>Solution-dyed akrilik kılıf, açık gözenekli sünger</span></div>
+      <div><span>Sırt borusu</span><span>Ø30 sarılı alüminyum, PA6-GF30 semer</span></div>
+      <div><span>Deney</span><span>EN 581-1 / -2 dayanım, ticari sınıf için -3</span></div>
+    </div>
+
+    <div style="margin-top:38px;">
+      <p class="etiket" style="margin-bottom:10px;">Renkler</p>
+      <div class="paletler">
+        <div class="palet"><i style="background:#2C302E"></i><b>Antrasit iskelet</b><small>RAL 7016 · toz boya</small></div>
+        <div class="palet"><i style="background:#BFA079"></i><b>Kum beji örgü</b><small>SEKİ-01</small></div>
+        <div class="palet"><i style="background:#85847E"></i><b>Gri örgü</b><small>SEKİ-02</small></div>
+        <div class="palet"><i style="background:#E6E1D4"></i><b>Kırık beyaz minder</b><small>akrilik · yıkanabilir</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HORECA -->
+  <section id="horeca">
+    <div class="sar">
+      <div class="baslik">
+        <p class="etiket">Otel, kafe ve bayi</p>
+        <h2>Terasta 40 koltuk, tek tip modül</h2>
+        <p class="olc">Modüler sistem işletmede ikinci bir iş yapıyor: sezon başında dizilimi değiştiriyorsunuz, kış deposunda modüller üst üste gidiyor, hasar gören tek modül yerine geliyor.</p>
+      </div>
+
+      <div class="ozellik">
+        <div><span>Horeca kilidi</span><span>Tek yönlü vidayla sökülemez sabitleme</span></div>
+        <div><span>Ticari dayanım</span><span>EN 581-3 deney raporu</span></div>
+        <div><span>Demonte sevkiyat</span><span>Hacim yarıya iner, 40' HC'ye ~95 üçlü</span></div>
+        <div><span>Yedek parça</span><span>10 yıl panel ve minder tedariki</span></div>
+        <div><span>Özel renk</span><span>25 set üstü siparişte RAL ve kumaş seçimi</span></div>
+        <div><span>İhracat</span><span>Özel etiketli (private label) üretim</span></div>
+      </div>
+
+      <div class="dugmeler">
+        <a class="btn" href="#iletisim">Proje fiyatı isteyin</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESLİMAT + İLETİŞİM -->
+  <section id="iletisim" class="sar">
+    <div class="baslik">
+      <p class="etiket">Sipariş</p>
+      <h2>Dizilimi gönderin, biz kuralım</h2>
+    </div>
+
+    <div class="iletisim">
+      <div class="kart">
+        <h3>SEKİ Dış Mekân Mobilya</h3>
+        <p class="sol">Büyükkayacık OSB, Selçuklu / Konya<br>Hafta içi 08.30 – 18.00</p>
+        <a class="bag" href="mailto:merhaba@seki.com.tr">merhaba@seki.com.tr</a>
+        <a class="bag" href="tel:+903320000000">+90 332 000 00 00</a>
+        <p class="sol" style="font-size:14.5px;">Kurucudaki dizilimi kopyalayıp mesajla gönderin; ölçü, renk ve teslim tarihiyle birlikte aynı gün fiyat dönüyoruz.</p>
+      </div>
+      <div class="kart">
+        <h3>Teslimat ve garanti</h3>
+        <div class="ozellik" style="grid-template-columns:1fr;">
+          <div><span>Üretim süresi</span><span>stokta 3, özel dizilimde 15 iş günü</span></div>
+          <div><span>Türkiye</span><span>montajlı teslim, modüller kutuda</span></div>
+          <div><span>Kurulum</span><span>derz başına 2 plaka, ~1 dakika</span></div>
+          <div><span>Garanti</span><span>iskelet 5, örgü 3, minder 2 yıl</span></div>
+          <div><span>İade</span><span>14 gün, kullanılmamış ürün</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="sar alt">
+    <span>SEKİ Dış Mekân Mobilya · Konya · Modüler oturma sistemi</span>
+    <span class="mono">RT-MOD Rev A · fiyatlar 2026 sezonu</span>
+  </div>
+  <div class="sar"><p class="kvk">Fiyatlara KDV dahildir. Ölçüler nominal değerlerdir; üretim toleransı ±1 mm. Görseller ürünün ölçekli teknik görünüşleridir. <a href="uretim.html">Üretim kılavuzları</a></p></div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- modül verisi ---------------- */
+  var MOD = {
+    YK:{ad:"Kolçak", kod:"YK", en:180, yuk:620, birim:0, kg:10, fiyat:4500, dokuma:1.17, ayak:4},
+    O1:{ad:"Tekli",  kod:"O1", en:620, yuk:720, birim:1, kg:9,  fiyat:9500, dokuma:0.76, ayak:4},
+    O2:{ad:"İkili",  kod:"O2", en:1240,yuk:720, birim:2, kg:15, fiyat:17500,dokuma:1.46, ayak:6}
+  };
+
+  var RENK = {
+    bej:{ad:"Kum beji", zemin:"#A98A63", serit:"#C9AC84", serit2:"#B8977094", minder:"#E6E1D4", minder2:"#D8D2C2", ornek:"#BFA079"},
+    gri:{ad:"Gri",      zemin:"#75746E", serit:"#94938C", serit2:"#8A897F94", minder:"#DEDED8", minder2:"#CFCFC8", ornek:"#85847E"}
+  };
+  var CERCEVE = "#2C302E", CERCEVE_AC = "#3E433F";
+
+  var PAKET = {
+    "YK|O1|YK":        {ad:"Tekli koltuk", fiyat:17900},
+    "YK|O2|YK":        {ad:"İkili kanepe", fiyat:25900},
+    "YK|O1|O1|YK":     {ad:"İkili kanepe (iki modüllü)", fiyat:26900},
+    "YK|O2|O1|YK":     {ad:"Üçlü kanepe", fiyat:34900},
+    "YK|O1|O2|YK":     {ad:"Üçlü kanepe", fiyat:34900},
+    "YK|O1|O1|O1|YK":  {ad:"Üçlü kanepe (üç modüllü)", fiyat:35900},
+    "O2":              {ad:"Kolçaksız ada", fiyat:16900}
+  };
+
+  var HAZIR = [
+    {ad:"Tekli koltuk",   oturma:["O1"],        kolcak:true},
+    {ad:"İkili kanepe",   oturma:["O2"],        kolcak:true},
+    {ad:"Üçlü kanepe",    oturma:["O2","O1"],   kolcak:true},
+    {ad:"Kolçaksız ada",  oturma:["O2"],        kolcak:false},
+    {ad:"Dörtlü teras",   oturma:["O2","O2"],   kolcak:true}
+  ];
+
+  var TL = new Intl.NumberFormat("tr-TR");
+  function tl(n){ return TL.format(n) + " ₺"; }
+  function mm(n){ return TL.format(n) + " mm"; }
+
+  /* ---------------- çizim ---------------- */
+  var sayac = 0;
+
+  function dokuDesen(id, r){
+    return '<pattern id="'+id+'" width="60" height="44" patternUnits="userSpaceOnUse">' +
+      '<rect width="60" height="44" fill="'+r.zemin+'"/>' +
+      '<rect x="0" y="2" width="60" height="18" rx="4" fill="'+r.serit+'"/>' +
+      '<rect x="0" y="24" width="60" height="18" rx="4" fill="'+r.serit+'"/>' +
+      '<rect x="6"  y="2"  width="9" height="18" rx="3" fill="'+r.serit2+'"/>' +
+      '<rect x="36" y="2"  width="9" height="18" rx="3" fill="'+r.serit2+'"/>' +
+      '<rect x="21" y="24" width="9" height="18" rx="3" fill="'+r.serit2+'"/>' +
+      '<rect x="51" y="24" width="9" height="18" rx="3" fill="'+r.serit2+'"/>' +
+      '</pattern>';
+  }
+
+  // moduller: ["YK","O1",...]  secenek: {renk, olcu:bool, yukOlcu:bool}
+  function ciz(moduller, sec){
+    sec = sec || {};
+    var r = RENK[sec.renk || "bej"];
+    var pid = "doku" + (++sayac);
+    var H = 720, KENAR = 26;
+    var altBosluk = sec.olcu ? 116 : 34;
+    var sagBosluk = sec.yukOlcu ? 150 : KENAR;
+    var toplam = 0, i;
+    for(i=0;i<moduller.length;i++){ toplam += MOD[moduller[i]].en; }
+    if(!toplam){ toplam = 620; }
+
+    // ortak kanvas: kartlardaki modüller aynı ölçekte görünsün
+    var pay = sec.kanvas ? Math.max(0, (sec.kanvas - toplam) / 2) : 0;
+    var vbX = -(KENAR + pay);
+    var vbW = toplam + 2 * pay + KENAR + sagBosluk;
+
+    var s = [];
+    s.push('<svg viewBox="'+vbX+' '+(-KENAR)+' '+vbW+' '+(H+KENAR+altBosluk)+'" role="img" aria-label="'+moduller.length+' modüllük dizilim, '+toplam+' milimetre">');
+    s.push('<defs>'+dokuDesen(pid, r)+'</defs>');
+
+    var x = 0;
+    for(i=0;i<moduller.length;i++){
+      var m = MOD[moduller[i]], w = m.en;
+      // ayaklar
+      s.push('<rect x="'+(x+10)+'" y="'+(H-20)+'" width="34" height="20" fill="'+CERCEVE+'"/>');
+      s.push('<rect x="'+(x+w-44)+'" y="'+(H-20)+'" width="34" height="20" fill="'+CERCEVE+'"/>');
+      if(m.kod === "O2"){ s.push('<rect x="'+(x+w/2-17)+'" y="'+(H-20)+'" width="34" height="20" fill="'+CERCEVE+'"/>'); }
+
+      if(m.kod === "YK"){
+        s.push('<rect x="'+x+'" y="'+(H-608)+'" width="'+w+'" height="588" fill="url(#'+pid+')" stroke="'+CERCEVE+'" stroke-width="7"/>');
+        s.push('<rect x="'+(x-4)+'" y="'+(H-622)+'" width="'+(w+8)+'" height="16" rx="3" fill="'+CERCEVE_AC+'"/>');
+      } else {
+        var birim = m.birim, k;
+        // sırt minderleri
+        for(k=0;k<birim;k++){
+          s.push('<rect x="'+(x+k*620+10)+'" y="'+(H-716)+'" width="600" height="282" rx="14" fill="'+r.minder2+'"/>');
+        }
+        // sırt borusu
+        s.push('<rect x="'+(x-2)+'" y="'+(H-726)+'" width="'+(w+4)+'" height="14" rx="7" fill="'+CERCEVE+'"/>');
+        // oturma minderleri
+        for(k=0;k<birim;k++){
+          s.push('<rect x="'+(x+k*620+8)+'" y="'+(H-444)+'" width="604" height="122" rx="12" fill="'+r.minder+'" stroke="'+r.minder2+'" stroke-width="3"/>');
+        }
+        // ön panel + oturma rayı
+        s.push('<rect x="'+x+'" y="'+(H-320)+'" width="'+w+'" height="300" fill="url(#'+pid+')" stroke="'+CERCEVE+'" stroke-width="7"/>');
+        s.push('<rect x="'+x+'" y="'+(H-330)+'" width="'+w+'" height="12" fill="'+CERCEVE+'"/>');
+      }
+      // derz
+      if(i < moduller.length-1){
+        s.push('<line x1="'+(x+w)+'" y1="'+(H-726)+'" x2="'+(x+w)+'" y2="'+H+'" stroke="'+CERCEVE+'" stroke-width="3" opacity=".45"/>');
+      }
+      x += w;
+    }
+
+    // zemin
+    s.push('<line x1="'+(vbX+6)+'" y1="'+H+'" x2="'+(toplam+(pay>0?pay:18))+'" y2="'+H+'" stroke="currentColor" stroke-width="2" opacity=".35"/>');
+
+    // genişlik ölçüsü
+    if(sec.olcu){
+      var oy = H + 62;
+      s.push('<line x1="0" y1="'+(H+10)+'" x2="0" y2="'+(oy+14)+'" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+      s.push('<line x1="'+toplam+'" y1="'+(H+10)+'" x2="'+toplam+'" y2="'+(oy+14)+'" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+      s.push('<line x1="0" y1="'+oy+'" x2="'+toplam+'" y2="'+oy+'" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+      s.push('<text x="'+(toplam/2)+'" y="'+(oy+40)+'" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="38" opacity=".8">'+toplam+' mm</text>');
+    }
+    // yükseklik ölçüsü
+    if(sec.yukOlcu){
+      var ox = toplam + 60;
+      s.push('<line x1="'+(toplam+14)+'" y1="'+(H-720)+'" x2="'+(ox+12)+'" y2="'+(H-720)+'" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+      s.push('<line x1="'+(toplam+14)+'" y1="'+(H-440)+'" x2="'+(ox+12)+'" y2="'+(H-440)+'" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+      s.push('<line x1="'+ox+'" y1="'+(H-720)+'" x2="'+ox+'" y2="'+H+'" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+      s.push('<text x="'+(ox+16)+'" y="'+(H-560)+'" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="34" opacity=".8">720</text>');
+      s.push('<text x="'+(ox+16)+'" y="'+(H-200)+'" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="34" opacity=".8">440</text>');
+    }
+
+    s.push('</svg>');
+    return s.join("");
+  }
+
+  /* ---------------- kilit çizimi ---------------- */
+  function kilitCizim(){
+    var pim = "#8D9490", cerceve = CERCEVE;
+    var s = [];
+    s.push('<svg viewBox="0 0 900 260" role="img" aria-label="V-kama kilit plakasının alttan görünüşü">');
+    // iki ray
+    s.push('<rect x="20" y="40" width="410" height="180" rx="4" fill="none" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+    s.push('<rect x="470" y="40" width="410" height="180" rx="4" fill="none" stroke="currentColor" stroke-width="2" opacity=".45"/>');
+    s.push('<text x="40" y="70" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="15" opacity=".6">MODÜL A</text>');
+    s.push('<text x="490" y="70" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="15" opacity=".6">MODÜL B</text>');
+    // plaka
+    s.push('<rect x="380" y="86" width="140" height="146" rx="10" fill="'+cerceve+'"/>');
+    // V kanallar
+    s.push('<path d="M398 116 h44 a14 14 0 0 1 0 28 h-30 l-14 -6 z" fill="#0000" stroke="#C9CCC7" stroke-width="3"/>');
+    s.push('<path d="M502 116 h-44 a14 14 0 0 0 0 28 h30 l14 -6 z" fill="#0000" stroke="#C9CCC7" stroke-width="3"/>');
+    s.push('<circle cx="404" cy="130" r="15" fill="none" stroke="#C9CCC7" stroke-width="3"/>');
+    s.push('<circle cx="496" cy="130" r="15" fill="none" stroke="#C9CCC7" stroke-width="3"/>');
+    s.push('<rect x="404" y="196" width="92" height="14" rx="7" fill="#C9CCC7" opacity=".8"/>');
+    s.push('<text x="450" y="252" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="14" opacity=".6">MK-02 · 90 × 92 × 3 mm A2</text>');
+    // pimler
+    s.push('<circle cx="424" cy="130" r="13" fill="'+pim+'"/><circle cx="476" cy="130" r="13" fill="'+pim+'"/>');
+    s.push('<text x="424" y="106" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="13" opacity=".7">MK-01</text>');
+    s.push('<text x="476" y="106" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="13" opacity=".7">MK-01</text>');
+    // kaydırma oku
+    s.push('<line x1="560" y1="170" x2="640" y2="170" stroke="currentColor" stroke-width="2" opacity=".55"/>');
+    s.push('<path d="M566 164 l-10 6 l10 6 z" fill="currentColor" opacity=".55"/>');
+    s.push('<text x="650" y="175" fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="15" opacity=".65">50 mm kaydır → derz 1 mm</text>');
+    // derz çizgisi
+    s.push('<line x1="450" y1="20" x2="450" y2="240" stroke="currentColor" stroke-width="1" stroke-dasharray="6 6" opacity=".3"/>');
+    s.push('</svg>');
+    return s.join("");
+  }
+
+  /* ---------------- statik çizimler ---------------- */
+  function yaz(id, html){ var e = document.getElementById(id); if(e){ e.innerHTML = html; } }
+
+  yaz("hero-cizim", ciz(["YK","O2","O1","YK"], {renk:"bej", olcu:true, yukOlcu:true}));
+  yaz("res-yk", ciz(["YK"], {renk:"bej", kanvas:1400}));
+  yaz("res-o1", ciz(["O1"], {renk:"bej", kanvas:1400}));
+  yaz("res-o2", ciz(["O2"], {renk:"bej", kanvas:1400}));
+  yaz("kilit-cizim", kilitCizim());
+
+  /* ---------------- kurucu ---------------- */
+  var durum = { oturma:["O2","O1"], kolcak:true, renk:"bej" };
+
+  function dizilim(){
+    var d = durum.oturma.slice();
+    if(durum.kolcak && d.length){ d.unshift("YK"); d.push("YK"); }
+    return d;
+  }
+
+  function hesapla(){
+    var d = dizilim(), i, m;
+    var o = {en:0, kg:0, liste:0, dokuma:0, ayak:0, oturmaMinder:0, sirtMinder:0, kisi:0};
+    for(i=0;i<d.length;i++){
+      m = MOD[d[i]];
+      o.en += m.en; o.kg += m.kg; o.liste += m.fiyat; o.dokuma += m.dokuma; o.ayak += m.ayak;
+      o.oturmaMinder += m.birim; o.sirtMinder += m.birim; o.kisi += m.birim;
+    }
+    o.derz = Math.max(0, d.length - 1);
+    o.plaka = o.derz * 2;
+    o.paket = PAKET[d.join("|")] || null;
+    o.fiyat = o.paket ? o.paket.fiyat : o.liste;
+    o.dokuma = Math.round(o.dokuma*100)/100;
+    return o;
+  }
+
+  function ciziDizi(){
+    var kap = document.getElementById("dizi");
+    kap.innerHTML = "";
+    var d = dizilim();
+    if(!d.length){ return; }
+    d.forEach(function(kod, i){
+      var m = MOD[kod];
+      var el = document.createElement("span");
+      el.className = "parca" + (kod === "YK" ? " yk" : "");
+      el.innerHTML = '<span>' + m.kod + ' · ' + m.ad + '</span>';
+      if(kod !== "YK"){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-label", m.ad + " modülünü çıkar");
+        b.textContent = "×";
+        b.addEventListener("click", function(){
+          var sira = 0;
+          for(var j=0;j<i;j++){ if(d[j] !== "YK"){ sira++; } }
+          durum.oturma.splice(sira,1);
+          guncelle();
+        });
+        el.appendChild(b);
+      }
+      kap.appendChild(el);
+    });
+  }
+
+  function ciziOzet(o){
+    var s = [];
+    function satir(a,b,sinif){ s.push('<div class="satir'+(sinif?" "+sinif:"")+'"><span>'+a+'</span><span>'+b+'</span></div>'); }
+    satir("Genişlik", mm(o.en));
+    satir("Derinlik × yükseklik", "800 × 720 mm");
+    satir("Oturan kişi", o.kisi ? o.kisi + " kişi" : "—");
+    satir("Minder", o.oturmaMinder + " oturma + " + o.sirtMinder + " sırt");
+    satir("Kilit plakası", o.derz ? o.plaka + " adet (" + o.derz + " derz)" : "gerekmiyor");
+    satir("Ağırlık", o.kg ? "≈ " + o.kg + " kg" : "—");
+    satir("Fiyat", tl(o.fiyat), "fiyat");
+    var html = s.join("");
+    if(o.paket && o.liste > o.paket.fiyat){
+      html += '<span class="rozet">Bu dizilim <b>' + o.paket.ad + '</b> paketiyle aynı — modülleri tek tek almaya göre ' + tl(o.liste - o.paket.fiyat) + ' avantajlı.</span>';
+    } else if(o.en > 3000){
+      html += '<span class="rozet">3 metreyi geçen dizilimler iki ayrı kanepe olarak da kurulabilir. <b>Proje fiyatı</b> için yazın.</span>';
+    } else if(!o.paket && o.en){
+      html += '<span class="rozet">Özel dizilim — modül fiyatlarının toplamı. Teslim <b>15 iş günü</b>.</span>';
+    }
+    document.getElementById("ozet").innerHTML = html;
+  }
+
+  function guncelle(){
+    var o = hesapla();
+    yaz("sahne-cizim", ciz(dizilim(), {renk:durum.renk, olcu:true}));
+    ciziDizi();
+    ciziOzet(o);
+    document.getElementById("kolcak").setAttribute("aria-pressed", durum.kolcak ? "true" : "false");
+    Array.prototype.forEach.call(document.querySelectorAll("#renkler .renk"), function(b){
+      b.setAttribute("aria-pressed", b.dataset.renk === durum.renk ? "true" : "false");
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#hazir .cip"), function(b){
+      var h = HAZIR[+b.dataset.i];
+      var ayni = h.kolcak === durum.kolcak && h.oturma.join("|") === durum.oturma.join("|");
+      b.setAttribute("aria-pressed", ayni ? "true" : "false");
+    });
+  }
+
+  // hazır dizilişler
+  var hazirKap = document.getElementById("hazir");
+  HAZIR.forEach(function(h, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "cip"; b.dataset.i = i;
+    b.setAttribute("aria-pressed","false");
+    b.textContent = h.ad;
+    b.addEventListener("click", function(){
+      durum.oturma = h.oturma.slice(); durum.kolcak = h.kolcak; guncelle();
+    });
+    hazirKap.appendChild(b);
+  });
+
+  // renk düğmeleri
+  var renkKap = document.getElementById("renkler");
+  Object.keys(RENK).forEach(function(k){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "renk"; b.dataset.renk = k;
+    b.setAttribute("aria-pressed","false");
+    b.innerHTML = '<i style="background:'+RENK[k].ornek+'"></i>' + RENK[k].ad;
+    b.addEventListener("click", function(){ durum.renk = k; guncelle(); });
+    renkKap.appendChild(b);
+  });
+
+  // ekleme
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ekle]"), function(b){
+    b.addEventListener("click", function(){
+      if(durum.oturma.length >= 6){ return; }
+      durum.oturma.push(b.dataset.ekle); guncelle();
+    });
+  });
+  document.getElementById("kolcak").addEventListener("click", function(){
+    durum.kolcak = !durum.kolcak; guncelle();
+  });
+
+  // kopyala
+  document.getElementById("kopyala").addEventListener("click", function(){
+    var o = hesapla(), d = dizilim();
+    var metin = "SEKİ dizilim\n" + d.join(" + ") +
+      "\nGenişlik: " + mm(o.en) + " · Derinlik 800 · Yükseklik 720" +
+      "\nÖrgü rengi: " + RENK[durum.renk].ad +
+      "\nMinder: " + o.oturmaMinder + " oturma + " + o.sirtMinder + " sırt" +
+      "\nFiyat: " + tl(o.fiyat) + (o.paket ? " (" + o.paket.ad + ")" : " (özel dizilim)");
+    var btn = this, eski = btn.textContent;
+    function bitir(ok){ btn.textContent = ok ? "Kopyalandı ✓" : "Kopyalanamadı"; setTimeout(function(){ btn.textContent = eski; }, 1800); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(metin).then(function(){ bitir(true); }, function(){ bitir(false); });
+    } else { bitir(false); }
+  });
+
+  guncelle();
+})();
+</script>
+</body>
+</html>
