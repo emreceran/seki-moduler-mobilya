@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEKİ · Katlanır sandalye ve masa kılavuzu</title>
+<meta name="description" content="SEKİ katlanır sandalye KS-1 ve katlanır masa KM-1 elde yapım kılavuzu: mekanizma, şablon noktaları, kesim listesi, yük testleri.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --kagit:#E8E7E0; --yuzey:#F6F5F0; --yuzey2:#DEDCD3; --gomulu:#DAD8CE;
+    --murekkep:#1C201D; --soluk:#5A6059; --cizgi:#CCCAC0;
+    --vurgu:#425C36; --vurgu-ustu:#FFFFFF; --vurgu-yumusak:#DFE6D6;
+    --uyari:#8A5A1E;
+    --disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --govde:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono","DejaVu Sans Mono",monospace;
+    --en:1180px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --kagit:#141614; --yuzey:#1D211E; --yuzey2:#262B27; --gomulu:#101210;
+      --murekkep:#ECEAE2; --soluk:#9AA096; --cizgi:#343933;
+      --vurgu:#A6C68C; --vurgu-ustu:#141A11; --vurgu-yumusak:#232C1F;
+      --uyari:#D6A163;
+    }
+  }
+  :root[data-theme="dark"]{
+    --kagit:#141614; --yuzey:#1D211E; --yuzey2:#262B27; --gomulu:#101210;
+    --murekkep:#ECEAE2; --soluk:#9AA096; --cizgi:#343933;
+    --vurgu:#A6C68C; --vurgu-ustu:#141A11; --vurgu-yumusak:#232C1F;
+    --uyari:#D6A163;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation:none!important; transition:none!important;} }
+  body{
+    margin:0; background:var(--kagit); color:var(--murekkep);
+    font-family:var(--govde); font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sar{width:100%; max-width:var(--en); margin:0 auto; padding-inline:22px;}
+  h1,h2,h3,h4{font-family:var(--disp); font-weight:700; line-height:1.08; letter-spacing:-0.022em; text-wrap:balance; margin:0;}
+  h1{font-size:clamp(38px,6.4vw,70px);}
+  h2{font-size:clamp(26px,3.4vw,38px);}
+  h3{font-size:19px; letter-spacing:-0.01em;}
+  p{margin:0;}
+  a{color:inherit;}
+  .etiket{font-family:var(--disp); font-size:11.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--soluk);}
+  .mono{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+  .sol{color:var(--soluk);}
+  .olc{max-width:64ch;}
+
+  /* ---- üst çubuk ---- */
+  header{position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--kagit) 88%, transparent);
+         backdrop-filter:blur(10px); border-bottom:1px solid var(--cizgi);}
+  .ust{display:flex; align-items:center; gap:26px; height:62px;}
+  .logo{font-family:var(--disp); font-weight:700; font-size:21px; letter-spacing:.2em; text-decoration:none; display:flex; align-items:center; gap:9px;}
+  .logo em{width:11px; height:11px; background:var(--vurgu); display:block;}
+  nav{margin-left:auto; display:flex; gap:20px; flex-wrap:wrap;}
+  nav a{font-family:var(--disp); font-size:13.5px; font-weight:500; text-decoration:none; color:var(--soluk); padding:4px 0; border-bottom:1.5px solid transparent;}
+  nav a:hover{color:var(--murekkep); border-bottom-color:var(--vurgu);}
+  @media (max-width:820px){ nav{display:none;} }
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible{outline:2px solid var(--vurgu); outline-offset:3px; border-radius:2px;}
+
+  /* ---- hero ---- */
+  .hero{padding-block:clamp(38px,6vw,76px) 12px;}
+  .hero-ic{display:grid; gap:26px;}
+  .hero h1{margin-top:14px;}
+  .hero .lead{font-size:clamp(18px,2vw,21px); margin-top:18px; color:var(--murekkep);}
+  .dugmeler{display:flex; gap:12px; flex-wrap:wrap; margin-top:26px;}
+  .btn{font-family:var(--disp); font-size:14.5px; font-weight:600; text-decoration:none; padding:12px 20px; border-radius:2px;
+       border:1.5px solid var(--murekkep); background:var(--murekkep); color:var(--kagit); cursor:pointer; display:inline-block;}
+  .btn.ikincil{background:transparent; color:var(--murekkep);}
+  .btn:hover{background:var(--vurgu); border-color:var(--vurgu); color:var(--vurgu-ustu);}
+  .btn.ikincil:hover{color:var(--vurgu-ustu);}
+
+  .cizimkutu{background:var(--yuzey); border:1px solid var(--cizgi); padding:20px 20px 12px; margin-top:34px;}
+  .cizimkutu svg{display:block; width:100%; height:auto; max-width:100%;}
+  .cizimkutu figcaption{margin-top:10px; padding-top:10px; border-top:1px solid var(--cizgi); display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+                        font-family:var(--mono); font-size:12.5px; color:var(--soluk);}
+
+  .foto{margin:0; background:var(--yuzey); border:1px solid var(--cizgi); padding:10px 10px 6px;}
+  .foto img{display:block; width:100%; height:auto; max-width:100%; background:var(--yuzey2);}
+  .foto figcaption{margin-top:9px; padding-top:9px; border-top:1px solid var(--cizgi); display:flex; justify-content:space-between;
+                   gap:12px; flex-wrap:wrap; font-family:var(--mono); font-size:12.5px; color:var(--soluk);}
+  .foto.buyuk{margin-top:34px; padding:12px 12px 8px;}
+
+  .serit{display:flex; flex-wrap:wrap; gap:0; border-top:1px solid var(--cizgi); border-bottom:1px solid var(--cizgi); margin-top:40px;}
+  .serit div{flex:1 1 160px; padding:16px 18px 16px 0; display:flex; align-items:baseline; gap:10px;}
+  .serit b{font-family:var(--disp); font-size:27px; font-weight:700; letter-spacing:-0.03em; font-variant-numeric:tabular-nums;}
+  .serit span{font-size:14px; color:var(--soluk); line-height:1.35;}
+
+  /* ---- bölüm ---- */
+  section{padding-block:clamp(48px,6vw,86px);}
+  .baslik{display:grid; gap:12px; margin-bottom:34px;}
+  .baslik p{max-width:60ch; color:var(--soluk);}
+
+  /* ---- modül kartları ---- */
+  .uclu{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media (max-width:860px){ .uclu{grid-template-columns:1fr;} }
+  .mkart{background:var(--yuzey); border:1px solid var(--cizgi); padding:18px; display:flex; flex-direction:column; gap:14px;}
+  .mkart .res{background:var(--gomulu); padding:14px; display:flex; align-items:center; justify-content:center;}
+  .mkart .res svg{width:100%; height:auto;}
+  .mkart .kod{font-family:var(--mono); font-size:12px; color:var(--vurgu); letter-spacing:.06em;}
+  .mkart p{font-size:15px; color:var(--soluk);}
+  .mkart dl{margin:auto 0 0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:13.5px; padding-top:12px; border-top:1px solid var(--cizgi);}
+  .mkart dt{color:var(--soluk);}
+  .mkart dd{margin:0; font-family:var(--mono); font-size:12.5px; text-align:right; font-variant-numeric:tabular-nums;}
+
+  .not{border-left:2px solid var(--vurgu); padding:2px 0 2px 16px; margin-top:26px; max-width:70ch;}
+  .not b{font-family:var(--disp);}
+
+  /* ---- kurucu ---- */
+  #kurucu{background:var(--yuzey); border-block:1px solid var(--cizgi);}
+  .kur{display:grid; grid-template-columns:1.45fr 1fr; gap:22px; align-items:start;}
+  @media (max-width:940px){ .kur{grid-template-columns:1fr;} }
+  .sahne{background:var(--gomulu); border:1px solid var(--cizgi); padding:18px; overflow-x:auto;}
+  .sahne svg{display:block; width:100%; min-width:260px; height:auto;}
+  .panel{display:grid; gap:18px;}
+  .grup{display:grid; gap:9px;}
+  .grup > .etiket{margin-bottom:2px;}
+  .sec{display:flex; gap:8px; flex-wrap:wrap;}
+  .cip{font-family:var(--disp); font-size:13.5px; font-weight:600; padding:9px 13px; border:1.5px solid var(--cizgi); background:var(--kagit); color:var(--murekkep); cursor:pointer; border-radius:2px;}
+  .cip:hover{border-color:var(--vurgu);}
+  .cip[aria-pressed="true"]{background:var(--vurgu-yumusak); border-color:var(--vurgu); color:var(--murekkep);}
+  .cip.ekle{border-style:dashed;}
+  .dizi{display:flex; gap:6px; flex-wrap:wrap; min-height:44px; align-content:flex-start;
+        padding:8px; border:1px dashed var(--cizgi); background:var(--kagit);}
+  .dizi:empty::after{content:"Henüz modül yok — aşağıdan ekleyin."; font-size:14px; color:var(--soluk); font-family:var(--govde);}
+  .parca{display:flex; align-items:center; gap:7px; background:var(--vurgu-yumusak); border:1px solid var(--cizgi);
+         padding:5px 7px 5px 10px; font-family:var(--mono); font-size:12.5px;}
+  .parca.yk{background:var(--yuzey2);}
+  .parca button{border:0; background:transparent; color:var(--soluk); cursor:pointer; font-size:15px; line-height:1; padding:2px 3px; font-family:var(--disp);}
+  .parca button:hover{color:var(--uyari);}
+  .ozet{border:1px solid var(--cizgi); background:var(--kagit);}
+  .ozet .satir{display:flex; justify-content:space-between; gap:12px; padding:9px 14px; border-bottom:1px solid var(--cizgi); font-size:14.5px;}
+  .ozet .satir:last-child{border-bottom:0;}
+  .ozet .satir span:last-child{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+  .ozet .fiyat{background:var(--vurgu-yumusak); align-items:baseline;}
+  .ozet .fiyat span:last-child{font-family:var(--disp); font-weight:700; font-size:23px; letter-spacing:-0.02em;}
+  .rozet{font-size:13.5px; color:var(--soluk); padding:10px 14px; border-top:1px solid var(--cizgi); display:block;}
+  .rozet b{color:var(--vurgu); font-family:var(--disp);}
+  .renkler{display:flex; gap:8px;}
+  .renk{display:flex; align-items:center; gap:8px; font-family:var(--disp); font-size:13px; font-weight:600; padding:7px 12px 7px 8px; border:1.5px solid var(--cizgi); background:var(--kagit); cursor:pointer;}
+  .renk i{width:18px; height:18px; display:block; border:1px solid rgba(0,0,0,.25);}
+  .renk[aria-pressed="true"]{border-color:var(--vurgu); background:var(--vurgu-yumusak);}
+
+  /* ---- ürünler ---- */
+  table.fiyat{width:100%; border-collapse:collapse; font-size:15px;}
+  .kaydir{overflow-x:auto; border:1px solid var(--cizgi); background:var(--yuzey);}
+  table.fiyat th, table.fiyat td{padding:13px 16px; text-align:left; border-bottom:1px solid var(--cizgi); white-space:nowrap;}
+  table.fiyat th{font-family:var(--disp); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--soluk); font-weight:600;}
+  table.fiyat td.ad{font-family:var(--disp); font-weight:600; white-space:normal; min-width:180px;}
+  table.fiyat td.m{font-family:var(--mono); font-size:13px; color:var(--soluk); font-variant-numeric:tabular-nums;}
+  table.fiyat td.tl{font-family:var(--mono); font-weight:500; text-align:right; font-variant-numeric:tabular-nums;}
+  table.fiyat tr:last-child td{border-bottom:0;}
+  table.fiyat tr.set td{background:var(--vurgu-yumusak);}
+  .ikili{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:860px){ .ikili{grid-template-columns:1fr;} }
+
+  /* ---- adımlar ---- */
+  .adimlar{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; counter-reset:a;}
+  @media (max-width:860px){ .adimlar{grid-template-columns:1fr;} }
+  .adim{display:grid; gap:9px; align-content:start;}
+  .adim .no{font-family:var(--mono); font-size:12px; color:var(--vurgu); letter-spacing:.1em;}
+  .adim p{font-size:15px; color:var(--soluk);}
+
+  /* ---- özellik listesi ---- */
+  .ozellik{display:grid; grid-template-columns:repeat(2,1fr); gap:0 36px;}
+  @media (max-width:760px){ .ozellik{grid-template-columns:1fr;} }
+  .ozellik div{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid var(--cizgi); font-size:15px;}
+  .ozellik dt, .ozellik span:first-child{color:var(--soluk);}
+  .ozellik span:last-child{font-family:var(--mono); font-size:13px; text-align:right; font-variant-numeric:tabular-nums;}
+
+  .paletler{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px;}
+  .palet{display:grid; gap:7px; width:140px;}
+  .palet i{display:block; height:62px; border:1px solid var(--cizgi);}
+  .palet b{font-family:var(--disp); font-size:13.5px;}
+  .palet small{font-family:var(--mono); font-size:11.5px; color:var(--soluk);}
+
+  /* ---- horeca ---- */
+  #horeca{background:var(--murekkep); color:var(--kagit);}
+  #horeca h2, #horeca .etiket{color:var(--kagit);}
+  #horeca .etiket{opacity:.62;}
+  #horeca p{color:color-mix(in srgb, var(--kagit) 76%, transparent);}
+  #horeca .ozellik div{border-bottom-color:color-mix(in srgb, var(--kagit) 22%, transparent);}
+  #horeca .ozellik span:first-child{color:color-mix(in srgb, var(--kagit) 66%, transparent);}
+  #horeca .btn{border-color:var(--kagit); background:var(--kagit); color:var(--murekkep);}
+  #horeca .btn:hover{background:var(--vurgu); border-color:var(--vurgu); color:#FFF;}
+
+  /* ---- iletişim ---- */
+  .iletisim{display:grid; grid-template-columns:1fr 1fr; gap:26px;}
+  @media (max-width:860px){ .iletisim{grid-template-columns:1fr;} }
+  .kart{background:var(--yuzey); border:1px solid var(--cizgi); padding:22px; display:grid; gap:12px; align-content:start;}
+  .kart a.bag{font-family:var(--mono); font-size:15px; color:var(--vurgu); text-decoration:none; border-bottom:1px solid var(--vurgu);}
+  footer{border-top:1px solid var(--cizgi); padding-block:28px 40px; font-size:13.5px; color:var(--soluk);}
+  footer .alt{display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap;}
+  .kvk{font-size:12.5px; color:var(--soluk); margin-top:10px;}
+
+  .cizgili{border-top:1px solid var(--cizgi);}
+  .hero h1{max-width:16ch;}
+  nav a.simdi{color:var(--murekkep); border-bottom-color:var(--vurgu);}
+  .icerik{display:flex; flex-wrap:wrap; gap:8px; margin:26px 0 0;}
+  .icerik a{font-family:var(--disp); font-size:13px; font-weight:600; text-decoration:none; padding:7px 12px; border:1.5px solid var(--cizgi); background:var(--yuzey); color:var(--murekkep); border-radius:2px;}
+  .icerik a:hover{border-color:var(--vurgu); background:var(--vurgu-yumusak);}
+  @media (max-width:820px){ .icerik{display:flex;} }
+  .ozetkutu{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+  @media (max-width:820px){ .ozetkutu{grid-template-columns:1fr;} }
+  .ozetkutu > div{background:var(--yuzey); border:1px solid var(--cizgi); padding:20px; display:grid; gap:9px; align-content:start;}
+  .ozetkutu p{font-size:15.5px; color:var(--soluk);}
+  .ara{margin:38px 0 14px;}
+  .ara.ilk{margin-top:0;}
+  .govde{margin-bottom:18px;}
+  .ikinot{display:grid; grid-template-columns:1fr 1fr; gap:0 30px;}
+  @media (max-width:860px){ .ikinot{grid-template-columns:1fr;} }
+  .cizimkutu{margin:0 0 22px;}
+  .cizimkutu .kay{overflow-x:auto;}
+  .kaydir{margin-bottom:8px;}
+  table.tb{width:100%; border-collapse:collapse; font-size:14.5px;}
+  table.tb th, table.tb td{padding:10px 14px; text-align:left; border-bottom:1px solid var(--cizgi); vertical-align:top;}
+  table.tb th{font-family:var(--disp); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--soluk); font-weight:600; white-space:nowrap;}
+  table.tb td:first-child{font-family:var(--disp); font-weight:600;}
+  table.tb .r{text-align:right; font-family:var(--mono); font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  table.tb tr:last-child td{border-bottom:0;}
+  table.tb tr.top td{background:var(--vurgu-yumusak); font-family:var(--mono); font-size:13px;}
+  table.tb tr.top td:first-child{font-family:var(--disp); font-size:14.5px;}
+  ol.is{list-style:none; counter-reset:is; margin:18px 0 26px; padding:0; display:grid; gap:0; border-top:1px solid var(--cizgi);}
+  ol.is li{counter-increment:is; display:grid; grid-template-columns:44px 1fr; gap:4px 8px; padding:14px 0; border-bottom:1px solid var(--cizgi);}
+  ol.is li::before{content:counter(is, decimal-leading-zero); font-family:var(--mono); font-size:12.5px; color:var(--vurgu); grid-row:1 / span 2; padding-top:3px;}
+  ol.is h4{font-size:16.5px; letter-spacing:-0.01em;}
+  ol.is p{font-size:15.5px; color:var(--soluk); max-width:78ch; grid-column:2;}
+  ul.mad{margin:14px 0 0; padding-left:20px; display:grid; gap:7px; max-width:82ch; font-size:16px;}
+  ul.mad.kutu{list-style:"☐  "; padding-left:26px;}
+  .not{margin-top:22px;}
+  .mono{font-size:.88em;}
+  svg text{font-family:var(--mono);}
+  .g-isk{fill:var(--yuzey2); stroke:var(--murekkep); stroke-width:1.2;}
+  .g-isk2{fill:var(--cizgi); stroke:var(--murekkep); stroke-width:1.2;}
+  .g-bos{fill:var(--yuzey); stroke:var(--murekkep); stroke-width:.8;}
+  .g-pan{fill:var(--vurgu-yumusak); stroke:var(--vurgu); stroke-width:1.4;}
+  .g-doku{fill:url(#doku); stroke:none;}
+  .g-dk1{fill:var(--vurgu); opacity:.28;}
+  .g-tak{fill:color-mix(in srgb, var(--uyari) 20%, var(--yuzey)); stroke:var(--uyari); stroke-width:1.4;}
+  .g-ahs{fill:color-mix(in srgb, var(--uyari) 42%, var(--yuzey)); stroke:var(--murekkep); stroke-width:1.1;}
+  .g-min{fill:var(--kagit); stroke:var(--soluk); stroke-width:1; stroke-dasharray:6 4;}
+  .g-civ{fill:var(--murekkep); stroke:var(--murekkep); stroke-width:.6;}
+  .g-sc{fill:var(--vurgu-yumusak); stroke:var(--vurgu); stroke-width:1;}
+  .g-sa{fill:color-mix(in srgb, var(--uyari) 24%, var(--yuzey)); stroke:var(--uyari); stroke-width:1;}
+  .g-serit{fill:none; stroke:var(--uyari); stroke-width:7; stroke-linejoin:round; stroke-linecap:butt; opacity:.85;}
+  .g-cz{stroke:var(--murekkep); stroke-width:1.2; fill:none;}
+  .g-olc{stroke:var(--soluk); stroke-width:.9; fill:none;}
+  .g-ek{stroke:var(--soluk); stroke-width:1; stroke-dasharray:5 4; fill:none;}
+  .g-yz{fill:var(--murekkep); font-size:13.5px;}
+  .g-oy{fill:var(--soluk); font-size:12.5px;}
+  .g-bas{fill:var(--murekkep); font-size:14px; font-weight:500; letter-spacing:.04em;}
+  @media print{ header{position:static;} .icerik{display:none;} section{padding-block:22px;} .cizimkutu, table.tb, ol.is li{break-inside:avoid;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="sar ust">
+    <a class="logo" href="index.html"><em></em>SEKİ</a>
+    <nav>
+      <a href="index.html#sistem">Sistem</a>
+      <a href="index.html#kurucu">Dizilim kurucu</a>
+      <a href="index.html#urunler">Ürünler</a>
+      <a class="simdi" href="index.html#katlanir">Katlanır</a>
+      <a href="index.html#montaj">Montaj</a>
+      <a href="index.html#malzeme">Malzeme</a>
+      <a href="index.html#horeca">Otel &amp; kafe</a>
+      <a href="elde-yapim.html">Elde yapım</a>
+      <a href="index.html#iletisim">İletişim</a>
+    </nav>
+  </div>
+</header>
+<main id="ust">
+
+  <div class="hero sar">
+    <p class="etiket">Atölye kılavuzu · katlanır seri · Rev A, 10 Ekim 2026</p>
+    <h1>Katlanır sandalye ve masa</h1>
+    <p class="lead olc">Oturma grubundan önce yapıp satabileceğimiz iki küçük ürün: örgülü katlanır sandalye KS-1 ve 60'lık katlanır masa KM-1. İkisi de aynı basit mekanizmayla çalışıyor, aynı iki profilden çıkıyor.</p>
+    <div class="serit">
+      <div><b>60</b><span>× 60 cm masa<br>yükseklik 720 mm</span></div>
+      <div><b>450</b><span>mm oturma<br>sandalye 520 × 840 mm</span></div>
+      <div><b>2</b><span>cıvata çifti<br>mafsal + menteşe</span></div>
+      <div><b>~2,9</b><span>kg şerit<br>2 sandalye + 1 masa</span></div>
+    </div>
+    <nav class="icerik" aria-label="Bu sayfada">
+      <a href="#gorus">Kolay mı?</a><a href="#mekanizma">Mekanizma</a><a href="#malzeme">Malzeme</a>
+      <a href="#sandalye">Sandalye</a><a href="#masa">Masa</a><a href="#orgu">Örgü</a><a href="#test">Satmadan önce</a>
+    </nav>
+  </div>
+
+  <section id="gorus" class="sar">
+    <div class="baslik">
+      <p class="etiket">Önce dürüst cevap</p>
+      <h2>Masa kolay, sandalye dikkat ister</h2>
+    </div>
+    <div class="ozetkutu">
+      <div><h3>Oturma grubuna göre gerçekten küçük iş</h3><p>Tekli koltukta 2,52 m² örgü ve 10 boy profil vardı. Bir sandalyede 0,28 m², bir masada 0,36 m² örgü var. İki sandalye ve bir masa toplam 5 boy profilden çıkıyor.</p></div>
+      <div><h3>Masa: bir günde biter</h3><p>İki dikdörtgen ayak çerçevesi, bir örgülü tabla, dört cıvata. Yük taşımıyor, hata affediyor. İlk yapılacak ürün bu olsun.</p></div>
+      <div><h3>Sandalye: iş örgüde değil, mekanizmada</h3><p>Delikler 1 mm sapmayla açılmalı, ayak uçları ve sırt açılı kesiliyor, üstüne insan oturuyor. Yük testi yapılmadan satılmaz. Çelikten ~9 kg geliyor; piyasadaki metal katlanır sandalyenin iki katı.</p></div>
+      <div><h3>Daha da kolayı var</h3><p>Hiç mekanizması olmayan örgülü tabure, puf ya da yan sehpa aynı gün içinde yapılır ve riski yoktur. Katlanır seriyle birlikte ya da ondan önce düşünün; isterseniz onların da kılavuzunu çıkarırım.</p></div>
+    </div>
+    <p class="not"><b>Bu tasarım kâğıt üzerinde.</b> Açık ve katlı hâlleri hesapla çizildi, ama parça yapılıp denenmedi. İlk sandalyeyi satılık değil, deneme olarak yapın.</p>
+  </section>
+
+  <section id="mekanizma" class="sar cizgili">
+    <div class="baslik">
+      <p class="etiket">Mekanizma</p>
+      <h2>Makas ayak, bir menteşe, bir semer</h2>
+      <p class="olc">Sandalye ve masa aynı üç parçadan oluşuyor: dış ayak çerçevesi, iç ayak çerçevesi ve üstteki örgülü çerçeve (oturak ya da tabla).</p>
+    </div>
+    <figure class="cizimkutu"><div class="kay"><svg viewBox="0 0 1100 440" role="img" aria-label="Mekanizma detayı yandan: önde menteşe kulağı ve cıvata, arkada semer çubuğu ve iki tırnak" style="min-width:720px"><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><polygon class="g-isk2" points="264.8,370.3 129.8,187.3 190.2,142.7 325.2,325.7"/><rect class="g-pan" x="70" y="90" width="390" height="60"/><rect class="g-sc" x="70" y="82.8" width="390" height="7.2"/><rect class="g-tak" x="136" y="150" width="48" height="84"/><circle class="g-civ" cx="160" cy="195" r="12"/><text class="g-yz" x="265" y="50" text-anchor="middle">oturak / tabla çerçevesi (örgülü)</text><text class="g-yz" x="266" y="193" text-anchor="start">kulak: 25×4 lama, delik Ø8,5</text><text class="g-oy" x="266" y="211" text-anchor="start">delik, çerçevenin altından 15 mm aşağıda</text><text class="g-oy" x="352" y="318" text-anchor="start">iç ayağın üst ucu</text><text class="g-bas" x="70" y="396" text-anchor="start">ÖNDE · MENTEŞE (Q)</text><polygon class="g-isk" points="680.9,342.4 776.9,162.4 843.1,197.6 747.1,377.6"/><rect class="g-pan" x="600" y="90" width="330" height="60"/><rect class="g-sc" x="600" y="82.8" width="330" height="7.2"/><rect class="g-isk2" x="780" y="150" width="60" height="60"/><rect class="g-tak" x="765" y="150" width="12" height="48"/><rect class="g-tak" x="843" y="150" width="12" height="48"/><text class="g-yz" x="765" y="50" text-anchor="middle">oturak / tabla çerçevesi (örgülü)</text><text class="g-yz" x="872" y="178" text-anchor="start">iki tırnak: 20×4 lama</text><text class="g-oy" x="872" y="196" text-anchor="start">çubuğun iki yanında</text><text class="g-oy" x="822" y="312" text-anchor="start">dış ayak + semer çubuğu 20×20</text><text class="g-bas" x="600" y="396" text-anchor="start">ARKADA · SEMER (B)</text></svg></div><figcaption><span>Çizim 1 · Menteşe ve semer, yandan</span><span>Sandalyede de masada da aynı</span></figcaption></figure>
+    <ul class="mad">
+      <li><b>Mafsal (P):</b> iki ayak çerçevesi ortada birer M8 cıvatayla birbirine bağlı, makas gibi açılıp kapanıyor.</li>
+      <li><b>Menteşe (Q):</b> oturağın ya da tablanın ön kenarı, iç ayağın üst ucuna iki kulakla ve M8 cıvatayla bağlı.</li>
+      <li><b>Semer (B):</b> arka kenarın altındaki iki tırnak, dış ayağın çubuğunun üstüne oturuyor. Üstüne yük binince makas açılamaz, kapanamaz.</li>
+      <li><b>Katlamak için:</b> arka kenar kaldırılır, tırnaklar çubuktan kurtulur, ayaklar birbirine yatırılır. İç ayak, dış ayağın çubuğuna dayanınca durur.</li>
+    </ul>
+    <figure class="cizimkutu"><div class="kay"><svg viewBox="0 0 1000 330" role="img" aria-label="Sandalyenin genişlik dizilişi, mafsal kesiti: oturak, iç ayak, dış ayak ve cıvata" style="min-width:720px"><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><rect class="g-isk" x="110" y="105" width="37.5" height="105"/><rect class="g-isk2" x="153.5" y="105" width="37.5" height="105"/><rect class="g-isk" x="852.5" y="105" width="37.5" height="105"/><rect class="g-isk2" x="809" y="105" width="37.5" height="105"/><rect class="g-pan" x="200" y="66" width="600" height="30"/><rect class="g-civ" x="110" y="157.5" width="99" height="7.5"/><rect class="g-civ" x="791" y="157.5" width="99" height="7.5"/><line class="g-olc" x1="110" y1="213" x2="110" y2="244"/><line class="g-olc" x1="107" y1="243" x2="113" y2="237"/><line class="g-olc" x1="890" y1="213" x2="890" y2="244"/><line class="g-olc" x1="887" y1="243" x2="893" y2="237"/><line class="g-olc" x1="110" y1="240" x2="890" y2="240"/><text class="g-oy" x="500" y="235" text-anchor="middle">520</text><line class="g-olc" x1="200" y1="63" x2="200" y2="38"/><line class="g-olc" x1="197" y1="45" x2="203" y2="39"/><line class="g-olc" x1="800" y1="63" x2="800" y2="38"/><line class="g-olc" x1="797" y1="45" x2="803" y2="39"/><line class="g-olc" x1="200" y1="42" x2="800" y2="42"/><text class="g-oy" x="500" y="37" text-anchor="middle">oturak 400</text><text class="g-oy" x="128.8" y="97" text-anchor="middle">dış</text><text class="g-oy" x="172.2" y="83" text-anchor="middle">iç</text><text class="g-yz" x="500" y="150" text-anchor="middle">soldan sağa: dış ayak 25 · pul 4 · iç ayak 25 · boşluk 6 · oturak</text><text class="g-oy" x="500" y="180" text-anchor="middle">mafsal cıvatası M8 × 70, fiberli somun, iki ayağın arasında naylon pul</text></svg></div><figcaption><span>Çizim 2 · Sandalyenin genişlik dizilişi (mafsaldan kesit)</span><span>Toplam genişlik 520 mm</span></figcaption></figure>
+    <p class="not"><b>Parmak sıkışması:</b> makas kapanırken iki ayağın arası ve semer çubuğunun üstü parmak sıkıştırır. Ayakların arasına 4 mm naylon pul koyun, satışta ürüne uyarı etiketi yapıştırın.</p>
+  </section>
+
+  <section id="malzeme" class="sar cizgili">
+    <div class="baslik">
+      <p class="etiket">Malzeme</p>
+      <h2>İki profil, bir bobin şerit</h2>
+      <p class="olc">Ayaklar 25×25, geri kalan her şey 20×20 profil. Takımlar oturma grubu kılavuzundakilerle aynı; ek olarak açılı kesim için gönyeli testere ya da açı gönyesi gerekir.</p>
+    </div>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Malzeme</th><th>1 sandalye</th><th>1 masa</th><th>Takım: 2 sandalye + 1 masa</th></tr></thead><tbody><tr><td>25×25×1,5 kutu profil (çelik)</td><td>3,2 m · 1 boy</td><td>3,4 m · 1 boy</td><td><b>9,8 m · 2 boy</b></td></tr><tr><td>20×20×1,5 kutu profil</td><td>4,5 m · 1 boy</td><td>5,5 m · 1 boy</td><td><b>14,6 m · 3 boy</b></td></tr><tr><td>PE rattan şerit 8 × 1,2 mm düz</td><td>100 m ≈ 0,9 kg</td><td>124 m ≈ 1,1 kg</td><td><b>324 m ≈ 2,9 kg</b>, 4 kg alın</td></tr><tr><td>25×4 lama (kulak) ve 20×4 lama (tırnak)</td><td>2 kulak + 4 tırnak</td><td>2 kulak + 4 tırnak</td><td><b>0,5 m + 0,5 m</b></td></tr><tr><td>3 mm sac (ayak tabanı 30 × 45, köşe takviyesi)</td><td>4 taban + 2 takviye</td><td>4 taban</td><td><b>küçük bir parça</b></td></tr><tr><td>M8 × 70 cıvata + fiberli somun (mafsal P)</td><td>2</td><td>2</td><td><b>6</b></td></tr><tr><td>M8 × 50 cıvata + fiberli somun (menteşe Q)</td><td>2</td><td>2</td><td><b>6</b></td></tr><tr><td>M8 naylon pul (ayakların arasına) ve çelik pul</td><td>8 + 8</td><td>8 + 8</td><td><b>25 + 25</b></td></tr><tr><td>25×25 profil tapası (sırt dikmesi ve ayak üst uçları)</td><td>4</td><td>4</td><td><b>12</b></td></tr><tr><td>Yapışkanlı kauçuk ayak pedi</td><td>4</td><td>4</td><td><b>12</b></td></tr><tr><td>Matkap uçlu vida 4,2×13 (şerit uçları)</td><td>~10</td><td>~6</td><td><b>1 kutu</b></td></tr><tr><td>Boya</td><td>—</td><td>—</td><td><b>fason toz boya ya da astar + 2 kat</b></td></tr><tr><td>Hesaplanan ağırlık</td><td>~9,0 kg</td><td>~10,3 kg</td><td>~28 kg</td></tr></tbody></table></div>
+  </section>
+
+  <section id="sandalye" class="sar cizgili">
+    <div class="baslik">
+      <p class="etiket">KS-1 · Katlanır sandalye</p>
+      <h2>Sandalye: 520 × 491 × 840 mm, oturma 450 mm</h2>
+      <p class="olc">Dış çerçeve ön ayak olarak başlar, oturağın arkasında kırılır ve sırt dikmesi olarak devam eder. İç çerçeve arka ayaktır ve oturağı önden taşır. Sırt örgüsü doğrudan dikmelerin ve iki rayın çevresine örülür, ayrı çerçevesi yoktur.</p>
+    </div>
+    <figure class="cizimkutu"><div class="kay"><svg viewBox="0 0 1000 640" role="img" aria-label="Katlanır sandalye yandan, açık: makas ayaklar, menteşeli oturak, sırt" style="min-width:720px"><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><line class="g-olc" x1="120" y1="570" x2="880" y2="570"/><polygon class="g-isk2" points="505.4,575.3 242.2,345.1 251.4,334.6 514.6,564.7"/><rect class="g-pan" x="230" y="318" width="212.8" height="13.4"/><rect class="g-tak" x="241.2" y="331.4" width="11.2" height="14.6"/><rect class="g-tak" x="425.4" y="331.4" width="2.8" height="9"/><rect class="g-tak" x="440.6" y="331.4" width="2.8" height="9"/><circle class="g-civ" cx="246.8" cy="339.8" r="2.5"/><polygon class="g-isk" points="246.9,565.7 428.9,332.7 439.9,341.3 257.9,574.3"/><polygon class="g-isk" points="427.6,335.2 491.3,97.8 504.8,101.4 441.2,338.9"/><rect class="g-isk2" x="450.5" y="250.3" width="11.2" height="11.2"/><rect class="g-isk2" x="489.5" y="104.8" width="11.2" height="11.2"/><polygon class="g-pan" points="449.7,255.5 488.7,110.1 491.4,110.8 452.5,256.3"/><rect class="g-isk2" x="428.8" y="331.4" width="11.2" height="11.2"/><circle class="g-civ" cx="357" cy="436.2" r="2.5"/><text class="g-bas" x="238.4" y="562" text-anchor="end">F</text><text class="g-bas" x="524" y="562" text-anchor="start">R</text><text class="g-bas" x="373" y="441.2" text-anchor="start">P</text><text class="g-bas" x="228.8" y="357.8" text-anchor="end">Q</text><text class="g-bas" x="456.4" y="351" text-anchor="start">B</text><text class="g-bas" x="516" y="105.6" text-anchor="start">T</text><text class="g-yz" x="336.4" y="308" text-anchor="middle">oturak (örgü, ayrı çerçeve)</text><text class="g-yz" x="520" y="178" text-anchor="start">sırt örgüsü · eğim 15°</text><text class="g-yz" x="470" y="502.8" text-anchor="start">S1 arka ayak</text><text class="g-yz" x="312.4" y="502.8" text-anchor="end">L1 ön ayak</text><text class="g-oy" x="456.4" y="369" text-anchor="start">semer çubuğu + oturak tırnakları</text><text class="g-oy" x="228.8" y="375.8" text-anchor="end">menteşe kulağı</text><line class="g-olc" x1="252.4" y1="573" x2="252.4" y2="602"/><line class="g-olc" x1="249.4" y1="601" x2="255.4" y2="595"/><line class="g-olc" x1="510" y1="573" x2="510" y2="602"/><line class="g-olc" x1="507" y1="601" x2="513" y2="595"/><line class="g-olc" x1="252.4" y1="598" x2="510" y2="598"/><text class="g-oy" x="381.2" y="593" text-anchor="middle">ayak izi 460</text><line class="g-olc" x1="230" y1="573" x2="230" y2="630"/><line class="g-olc" x1="227" y1="629" x2="233" y2="623"/><line class="g-olc" x1="505" y1="573" x2="505" y2="630"/><line class="g-olc" x1="502" y1="629" x2="508" y2="623"/><line class="g-olc" x1="230" y1="626" x2="505" y2="626"/><text class="g-oy" x="367.5" y="621" text-anchor="middle">derinlik 491</text><line class="g-olc" x1="227" y1="570" x2="156" y2="570"/><line class="g-olc" x1="157" y1="573" x2="163" y2="567"/><line class="g-olc" x1="227" y1="318" x2="156" y2="318"/><line class="g-olc" x1="157" y1="321" x2="163" y2="315"/><line class="g-olc" x1="160" y1="570" x2="160" y2="318"/><text class="g-oy" x="155" y="444" text-anchor="middle" transform="rotate(-90 155 444)">450</text><line class="g-olc" x1="507.7" y1="570" x2="598.7" y2="570"/><line class="g-olc" x1="591.7" y1="573" x2="597.7" y2="567"/><line class="g-olc" x1="507.7" y1="99.6" x2="598.7" y2="99.6"/><line class="g-olc" x1="591.7" y1="102.6" x2="597.7" y2="96.6"/><line class="g-olc" x1="594.7" y1="570" x2="594.7" y2="99.6"/><text class="g-oy" x="589.7" y="334.8" text-anchor="middle" transform="rotate(-90 589.7 334.8)">840</text></svg></div><figcaption><span>Çizim 3 · Sandalye yandan, açık</span><span>Ayak izi 460 mm · sırt eğimi 15°</span></figcaption></figure>
+    <figure class="cizimkutu"><div class="kay"><svg viewBox="0 0 1000 620" role="img" aria-label="Katlanır sandalye yandan, katlanmış: arka ayak ön ayağa yatmış, oturak sırta kalkmış" style="min-width:720px"><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><line class="g-olc" x1="120" y1="570" x2="880" y2="570"/><polygon class="g-isk2" points="430.3,570.7 395.3,222.8 409.3,221.4 444.3,569.3"/><polygon class="g-pan" points="397.9,239.9 282.4,61.2 293.6,53.9 409.2,232.6"/><polygon class="g-isk" points="409.9,537.5 409.9,241.9 423.9,241.9 423.9,537.5"/><polygon class="g-isk" points="410.5,244.7 314.5,18.4 327.3,12.9 423.4,239.2"/><rect class="g-isk2" x="378.5" y="159" width="11.2" height="11.2"/><rect class="g-isk2" x="319.7" y="20.4" width="11.2" height="11.2"/><rect class="g-isk2" x="411.3" y="236.3" width="11.2" height="11.2"/><circle class="g-civ" cx="402.3" cy="222.1" r="2.5"/><circle class="g-civ" cx="416.9" cy="367.7" r="2.5"/><text class="g-yz" x="413.3" y="510" text-anchor="end">arka ayak ön ayağa yattı</text><text class="g-yz" x="314.1" y="124.6" text-anchor="end">oturak kalktı,</text><text class="g-yz" x="314.1" y="142.6" text-anchor="end">sırtın önüne yaslandı</text><text class="g-oy" x="446.9" y="247.9" text-anchor="start">semer çubuğu durdurucu olur</text><text class="g-bas" x="512" y="278.8" text-anchor="start">Katlı ölçü ≈ 520 × 300 × 990 mm</text><text class="g-oy" x="512" y="300.8" text-anchor="start">Sırt dikmesi kırık olduğu için</text><text class="g-oy" x="512" y="318.8" text-anchor="start">dümdüz olmaz. Duvara yaslanır,</text><text class="g-oy" x="512" y="336.8" text-anchor="start">birkaç sandalye iç içe dizilir.</text></svg></div><figcaption><span>Çizim 4 · Sandalye yandan, katlı</span><span>Katlı kalınlık yaklaşık 300 mm</span></figcaption></figure>
+    <h3 class="ara">Şablon noktaları</h3>
+    <p class="olc govde">Bu ürünü ölçü alarak değil, şablonla yapın. Bir sunta parçasına yer çizgisini çizin, aşağıdaki noktaları işaretleyin (ölçüler profilin eksenine göre), profilleri çizgilerin üstüne koyup puntalayın. İki yan da aynı şablondan çıkar.</p>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Nokta</th><th>Ne</th><th class="r">Önden (mm)</th><th class="r">Yerden (mm)</th></tr></thead><tbody><tr><td><b>F</b></td><td>Dış ayak ucu (yerde)</td><td class="r">40</td><td class="r">0</td></tr><tr><td><b>R</b></td><td>İç ayak ucu (yerde)</td><td class="r">500</td><td class="r">0</td></tr><tr><td><b>P</b></td><td>Mafsal (iki ayağın kesiştiği delik)</td><td class="r">227</td><td class="r">239</td></tr><tr><td><b>Q</b></td><td>Menteşe deliği (iç ayağın üst ucu)</td><td class="r">30</td><td class="r">411</td></tr><tr><td><b>B</b></td><td>Semer çubuğu ekseni = dış ayağın kırıldığı yer</td><td class="r">365</td><td class="r">416</td></tr><tr><td><b>T</b></td><td>Sırt dikmesinin üst ucu</td><td class="r">479</td><td class="r">840</td></tr></tbody></table></div>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Parça</th><th>Ayak ucundan mafsal deliğine (P)</th><th>Ayak ucundan üst deliğe / kırığa</th><th>Düşeyle açısı</th></tr></thead><tbody><tr><td><b>L1</b> dış ayak</td><td>303 mm</td><td>528 mm (semer çubuğu ekseni)</td><td>38,0°</td></tr><tr><td><b>S1</b> iç ayak</td><td>363 mm</td><td>624 mm (menteşe deliği Q)</td><td>48,8°</td></tr></tbody></table></div>
+    <h3 class="ara">Kesim listesi</h3>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Kod</th><th>Parça</th><th>Profil</th><th class="r">Boy (mm)</th><th class="r">Adet</th><th>Not</th></tr></thead><tbody><tr><td><b>L1</b></td><td>Ön ayak (dış çerçeve alt parça)</td><td>25×25×1,5</td><td class="r">528</td><td class="r">2</td><td>Alt uç 38,0°, üst uç 11,5° açılı</td></tr><tr><td><b>L2</b></td><td>Sırt dikmesi (dış çerçeve üst parça)</td><td>25×25×1,5</td><td class="r">439</td><td class="r">2</td><td>Alt uç 11,5° açılı, üst uç düz</td></tr><tr><td><b>S1</b></td><td>Arka ayak (iç çerçeve)</td><td>25×25×1,5</td><td class="r">639</td><td class="r">2</td><td>Alt uç 48,8° açılı, üst uç düz</td></tr><tr><td><b>B</b></td><td>Semer çubuğu (L1–L2 kırığında)</td><td>20×20×1,5</td><td class="r">470</td><td class="r">1</td><td>Oturağın arkası buna oturur</td></tr><tr><td><b>L3</b></td><td>Ön ayak bağlantısı</td><td>20×20×1,5</td><td class="r">470</td><td class="r">1</td><td>Ayak ucundan 80 mm yukarıda</td></tr><tr><td><b>L4</b></td><td>Sırt rayı</td><td>20×20×1,5</td><td class="r">470</td><td class="r">2</td><td>Kırıktan 150 ve 418 mm yukarıda</td></tr><tr><td><b>S2</b></td><td>Arka ayak bağlantısı</td><td>20×20×1,5</td><td class="r">412</td><td class="r">2</td><td>Ayak ucundan 80 ve 200 mm yukarıda</td></tr><tr><td><b>O1</b></td><td>Oturak ön ve arka kenar</td><td>20×20×1,5</td><td class="r">400</td><td class="r">2</td><td></td></tr><tr><td><b>O2</b></td><td>Oturak yan kenar ve orta kayıt</td><td>20×20×1,5</td><td class="r">340</td><td class="r">3</td><td></td></tr></tbody></table></div>
+    <ol class="is"><li><h4>Şablonu çizin</h4><p>Suntaya yer çizgisini ve altı noktayı işaretleyin. F–B, B–T ve R–Q çizgilerini çekin. Kesişim P noktasına denk gelmeli; gelmiyorsa ölçüyü yeniden alın.</p></li><li><h4>Dış yanları kaynatın</h4><p>L1 ve L2'yi şablona koyun, kırık yerinde alın alına kaynatın. Kırığın iç köşesine 3 mm sacdan küçük bir üçgen takviye kaynatın: sırta yaslanan kişinin bütün kuvveti buradan geçer. İkinci yanı birincinin üstünde yapın.</p></li><li><h4>Delikleri delin</h4><p>P deliğini (Ø8,5) iki L1'e ve iki S1'e, Q deliğini iki S1'e açın. Dört parçayı işkenceyle üst üste bağlayıp tek seferde delerseniz delikler birbirini tutar. Deliği profilin tam ortasından, iki cidarı da geçecek şekilde delin.</p></li><li><h4>Dış çerçeveyi kurun</h4><p>İki dış yanı semer çubuğu (B), ön ayak bağlantısı (L3) ve iki sırt rayı (L4) ile birleştirin. Semer çubuğunun üst yüzü yerden 426 mm'de olmalı. Köşegenleri ölçün.</p></li><li><h4>İç çerçeveyi kurun</h4><p>İki S1'i iki S2 bağlantısıyla birleştirin. Bağlantılar ayak ucundan 80 ve 200 mm yukarıda; daha yukarı koymayın, katlanan oturağa yer kalsın. Dış genişlik 462 mm olmalı ve dış çerçevenin içine 4'er mm boşlukla girmeli.</p></li><li><h4>Oturak çerçevesini yapın</h4><p>400 × 380 mm çerçeve, ortada öne-arkaya bir kayıt. Ön köşelerin altına, yan kenarların dış yüzüyle aynı hizada iki kulak (25×4 lama, 30 mm aşağı sarkar, delik çerçeve altından 15 mm aşağıda, ön kenardan 30 mm içeride).</p></li><li><h4>Tırnakları yerinde kaynatın</h4><p>Sandalyeyi cıvatalarla kurun, oturağı semer çubuğunun üstüne indirin, oturak yatay olsun. Arka kenarın altına, çubuğun önüne ve arkasına birer tırnak puntalayın (iki yanda, toplam dört). Çubukla tırnak arasında 1 mm boşluk kalsın.</p></li><li><h4>Ayak uçlarını kapatın</h4><p>Dört ayak ucuna 3 mm sacdan 30 × 45 mm taban kaynatın, yere tam basmalı. Sandalye düz zeminde sallanmamalı.</p></li><li><h4>Katlayıp açın, sonra boyaya verin</h4><p>Boyadan önce on kez açıp kapatın. Sürtünen, takılan yer varsa şimdi düzeltin. Sonra sökün, boyayın, oturağı ve sırtı örün, yeniden kurun. Fiberli somunları boşluk kalmayana kadar sıkın, profili ezmeyin.</p></li></ol>
+  </section>
+
+  <section id="masa" class="sar cizgili">
+    <div class="baslik">
+      <p class="etiket">KM-1 · Katlanır masa</p>
+      <h2>Masa: 600 × 600 × 720 mm</h2>
+      <p class="olc">İki kişilik balkon ve bahçe masası. Tabla iç çerçeveye menteşeli, dış çerçevenin üst çubuğuna oturuyor. Katlanınca tabla ayakların yanına sarkıyor.</p>
+    </div>
+    <figure class="cizimkutu"><div class="kay"><svg viewBox="0 0 1100 600" role="img" aria-label="Katlanır masa yandan: solda açık, sağda katlanmış" style="min-width:720px"><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><line class="g-olc" x1="40" y1="530" x2="1060" y2="530"/><polygon class="g-isk2" points="386.6,534 123.4,152.6 135,144.7 398.2,526"/><polygon class="g-isk" points="117.8,526 381,141.9 392.6,149.8 129.4,534"/><rect class="g-isk2" x="381.2" y="140.2" width="11.2" height="11.2"/><rect class="g-pan" x="90" y="126.8" width="336" height="13.4"/><rect class="g-tak" x="123.6" y="140.2" width="11.2" height="14.6"/><rect class="g-tak" x="377.8" y="140.2" width="2.8" height="9"/><rect class="g-tak" x="393" y="140.2" width="2.8" height="9"/><circle class="g-civ" cx="129.2" cy="148.6" r="2.5"/><circle class="g-civ" cx="257.5" cy="334.6" r="2.5"/><text class="g-bas" x="109.6" y="522" text-anchor="end">F</text><text class="g-bas" x="406.4" y="522" text-anchor="start">R</text><text class="g-bas" x="275.5" y="339.6" text-anchor="start">P</text><text class="g-bas" x="111.2" y="170.6" text-anchor="end">Q</text><text class="g-bas" x="408.8" y="167.8" text-anchor="start">B</text><text class="g-yz" x="258" y="116.8" text-anchor="middle">tabla 600 × 600 (örgü)</text><text class="g-yz" x="356.4" y="446" text-anchor="start">M2 iç çerçeve</text><text class="g-yz" x="159.6" y="446" text-anchor="end">M1 dış çerçeve</text><line class="g-olc" x1="123.6" y1="533" x2="123.6" y2="562"/><line class="g-olc" x1="120.6" y1="561" x2="126.6" y2="555"/><line class="g-olc" x1="392.4" y1="533" x2="392.4" y2="562"/><line class="g-olc" x1="389.4" y1="561" x2="395.4" y2="555"/><line class="g-olc" x1="123.6" y1="558" x2="392.4" y2="558"/><text class="g-oy" x="258" y="553" text-anchor="middle">480</text><line class="g-olc" x1="90" y1="533" x2="90" y2="590"/><line class="g-olc" x1="87" y1="589" x2="93" y2="583"/><line class="g-olc" x1="426" y1="533" x2="426" y2="590"/><line class="g-olc" x1="423" y1="589" x2="429" y2="583"/><line class="g-olc" x1="90" y1="586" x2="426" y2="586"/><text class="g-oy" x="258" y="581" text-anchor="middle">600</text><line class="g-olc" x1="87" y1="530" x2="52" y2="530"/><line class="g-olc" x1="53" y1="533" x2="59" y2="527"/><line class="g-olc" x1="87" y1="126.8" x2="52" y2="126.8"/><line class="g-olc" x1="53" y1="129.8" x2="59" y2="123.8"/><line class="g-olc" x1="56" y1="530" x2="56" y2="126.8"/><text class="g-oy" x="51" y="328.4" text-anchor="middle" transform="rotate(-90 51 328.4)">720</text><text class="g-oy" x="258" y="93.2" text-anchor="middle">AÇIK</text><polygon class="g-isk2" points="814.1,530.4 788.6,67.7 802.5,67 828.1,529.6"/><polygon class="g-isk" points="801,529.8 801,64.1 815,64.1 815,529.8"/><rect class="g-isk2" x="802.4" y="58.5" width="11.2" height="11.2"/><polygon class="g-pan" points="823.1,27.6 865,361 851.6,362.7 809.8,29.3"/><circle class="g-civ" cx="795.6" cy="67.3" r="2.5"/><circle class="g-civ" cx="808" cy="292.9" r="2.5"/><line class="g-olc" x1="883.8" y1="530" x2="924.8" y2="530"/><line class="g-olc" x1="917.8" y1="533" x2="923.8" y2="527"/><line class="g-olc" x1="883.8" y1="20" x2="924.8" y2="20"/><line class="g-olc" x1="917.8" y1="23" x2="923.8" y2="17"/><line class="g-olc" x1="920.8" y1="530" x2="920.8" y2="20"/><text class="g-oy" x="915.8" y="275" text-anchor="middle" transform="rotate(-90 915.8 275)">≈ 910</text><text class="g-oy" x="740.8" y="93.2" text-anchor="middle">KATLI · kalınlık ≈ 110 mm</text><text class="g-yz" x="885.6" y="187.3" text-anchor="start">tabla menteşeden</text><text class="g-yz" x="885.6" y="205.3" text-anchor="start">aşağı sarkar</text></svg></div><figcaption><span>Çizim 5 · Masa yandan, açık ve katlı</span><span>Katlı yükseklik yaklaşık 910 mm</span></figcaption></figure>
+    <h3 class="ara">Şablon noktaları</h3>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Nokta</th><th>Ne</th><th class="r">Önden (mm)</th><th class="r">Yerden (mm)</th></tr></thead><tbody><tr><td><b>F</b></td><td>Dış ayak ucu (yerde)</td><td class="r">60</td><td class="r">0</td></tr><tr><td><b>R</b></td><td>İç ayak ucu (yerde)</td><td class="r">540</td><td class="r">0</td></tr><tr><td><b>P</b></td><td>Mafsal (iki ayağın kesiştiği delik)</td><td class="r">299</td><td class="r">349</td></tr><tr><td><b>Q</b></td><td>Menteşe deliği (iç ayağın üst ucu)</td><td class="r">70</td><td class="r">681</td></tr><tr><td><b>B</b></td><td>Semer çubuğu ekseni = dış ayağın üst ucu</td><td class="r">530</td><td class="r">686</td></tr></tbody></table></div>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Parça</th><th>Ayak ucundan mafsal deliğine (P)</th><th>Ayak ucundan üst deliğe / kırığa</th><th>Düşeyle açısı</th></tr></thead><tbody><tr><td><b>M1</b> dış ayak</td><td>423 mm</td><td>832 mm (semer çubuğu ekseni)</td><td>34,4°</td></tr><tr><td><b>M2</b> iç ayak</td><td>424 mm</td><td>827 mm (menteşe deliği Q)</td><td>34,6°</td></tr></tbody></table></div>
+    <h3 class="ara">Kesim listesi</h3>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Kod</th><th>Parça</th><th>Profil</th><th class="r">Boy (mm)</th><th class="r">Adet</th><th>Not</th></tr></thead><tbody><tr><td><b>M1</b></td><td>Dış çerçeve ayağı</td><td>25×25×1,5</td><td class="r">842</td><td class="r">2</td><td>Alt uç 34,4° açılı</td></tr><tr><td><b>M2</b></td><td>İç çerçeve ayağı</td><td>25×25×1,5</td><td class="r">842</td><td class="r">2</td><td>Alt uç 34,6° açılı</td></tr><tr><td><b>B</b></td><td>Dış çerçeve üst çubuğu (semer çubuğu)</td><td>20×20×1,5</td><td class="r">458</td><td class="r">1</td><td>Ayakların üst ucunda</td></tr><tr><td><b>M3</b></td><td>Dış çerçeve alt bağlantısı</td><td>20×20×1,5</td><td class="r">458</td><td class="r">1</td><td>Ayak ucundan 120 mm yukarıda</td></tr><tr><td><b>M4</b></td><td>İç çerçeve bağlantısı</td><td>20×20×1,5</td><td class="r">400</td><td class="r">3</td><td>Ayak ucundan 120 ve 300 mm, üst uçtan 100 mm</td></tr><tr><td><b>T1</b></td><td>Tabla kenarı (uzun)</td><td>20×20×1,5</td><td class="r">596</td><td class="r">2</td><td></td></tr><tr><td><b>T2</b></td><td>Tabla kenarı (kısa) ve orta kayıt</td><td>20×20×1,5</td><td class="r">556</td><td class="r">3</td><td></td></tr><tr><td><b>T3</b></td><td>Tabla çapraz kayıt parçası</td><td>20×20×1,5</td><td class="r">268</td><td class="r">2</td><td>Orta kaydın iki yanına</td></tr></tbody></table></div>
+    <figure class="cizimkutu"><div class="kay"><svg viewBox="0 0 1000 420" role="img" aria-label="Oturak ve tabla çerçeveleri üstten: kenarlar, kayıtlar, kulak ve tırnak yerleri" style="min-width:720px"><defs><pattern id="doku" width="10" height="10" patternUnits="userSpaceOnUse"><rect class="g-dk1" x="0" y="0" width="5" height="5"/><rect class="g-dk1" x="5" y="5" width="5" height="5"/></pattern></defs><rect class="g-isk" x="120" y="80" width="220" height="11"/><rect class="g-isk" x="120" y="278" width="220" height="11"/><rect class="g-isk" x="120" y="91" width="11" height="187"/><rect class="g-isk" x="329" y="91" width="11" height="187"/><rect class="g-isk2" x="224.5" y="91" width="11" height="187"/><rect class="g-tak" x="120" y="91" width="2.2" height="13.8"/><rect class="g-tak" x="337.8" y="91" width="2.2" height="13.8"/><rect class="g-tak" x="153" y="280.2" width="11" height="2.2"/><rect class="g-tak" x="153" y="293.4" width="11" height="2.2"/><rect class="g-tak" x="296" y="280.2" width="11" height="2.2"/><rect class="g-tak" x="296" y="293.4" width="11" height="2.2"/><text class="g-oy" x="230" y="72" text-anchor="middle">ön</text><text class="g-oy" x="230" y="323" text-anchor="middle">arka · tırnaklar çubuğun iki yanına</text><text class="g-oy" x="112" y="101.6" text-anchor="end">kulak</text><line class="g-olc" x1="120" y1="292" x2="120" y2="347"/><line class="g-olc" x1="117" y1="346" x2="123" y2="340"/><line class="g-olc" x1="340" y1="292" x2="340" y2="347"/><line class="g-olc" x1="337" y1="346" x2="343" y2="340"/><line class="g-olc" x1="120" y1="343" x2="340" y2="343"/><text class="g-oy" x="230" y="338" text-anchor="middle">400</text><line class="g-olc" x1="343" y1="80" x2="370" y2="80"/><line class="g-olc" x1="363" y1="83" x2="369" y2="77"/><line class="g-olc" x1="343" y1="289" x2="370" y2="289"/><line class="g-olc" x1="363" y1="292" x2="369" y2="286"/><line class="g-olc" x1="366" y1="80" x2="366" y2="289"/><text class="g-oy" x="361" y="184.5" text-anchor="middle" transform="rotate(-90 361 184.5)">380</text><text class="g-bas" x="230" y="385" text-anchor="middle">OTURAK ÇERÇEVESİ</text><rect class="g-isk" x="470" y="40" width="298" height="10"/><rect class="g-isk" x="470" y="328" width="298" height="10"/><rect class="g-isk" x="470" y="50" width="10" height="278"/><rect class="g-isk" x="758" y="50" width="10" height="278"/><rect class="g-isk2" x="614" y="50" width="10" height="278"/><rect class="g-isk2" x="480" y="184" width="134" height="10"/><rect class="g-isk2" x="624" y="184" width="134" height="10"/><rect class="g-tak" x="521" y="69" width="2" height="12.5"/><rect class="g-tak" x="715" y="69" width="2" height="12.5"/><rect class="g-tak" x="530" y="297" width="10" height="2"/><rect class="g-tak" x="530" y="311" width="10" height="2"/><rect class="g-tak" x="698" y="297" width="10" height="2"/><rect class="g-tak" x="698" y="311" width="10" height="2"/><text class="g-oy" x="782" y="75" text-anchor="start">kulaklar: iç çerçevenin</text><text class="g-oy" x="782" y="93" text-anchor="start">iç yüzlerine denk gelir</text><text class="g-oy" x="782" y="305" text-anchor="start">tırnaklar: kenardan</text><text class="g-oy" x="782" y="323" text-anchor="start">70 mm içeride</text><line class="g-olc" x1="470" y1="341" x2="470" y2="370"/><line class="g-olc" x1="467" y1="369" x2="473" y2="363"/><line class="g-olc" x1="768" y1="341" x2="768" y2="370"/><line class="g-olc" x1="765" y1="369" x2="771" y2="363"/><line class="g-olc" x1="470" y1="366" x2="768" y2="366"/><text class="g-oy" x="619" y="361" text-anchor="middle">596</text><line class="g-olc" x1="467" y1="40" x2="442" y2="40"/><line class="g-olc" x1="443" y1="43" x2="449" y2="37"/><line class="g-olc" x1="467" y1="338" x2="442" y2="338"/><line class="g-olc" x1="443" y1="341" x2="449" y2="335"/><line class="g-olc" x1="446" y1="40" x2="446" y2="338"/><text class="g-oy" x="441" y="189" text-anchor="middle" transform="rotate(-90 441 189)">596</text><text class="g-bas" x="619" y="408" text-anchor="middle">TABLA ÇERÇEVESİ</text></svg></div><figcaption><span>Çizim 6 · Oturak ve tabla çerçeveleri, üstten</span><span>Turuncu: kulaklar ve tırnaklar (alt yüzde)</span></figcaption></figure>
+    <ol class="is"><li><h4>Dış çerçeveyi kaynatın</h4><p>İki M1 ayağı, üst uçlarında semer çubuğu (B), ayak ucundan 120 mm yukarıda alt bağlantı (M3). İç genişlik 458 mm.</p></li><li><h4>İç çerçeveyi kaynatın</h4><p>İki M2 ayağı ve üç M4 bağlantısı. Dış genişlik 450 mm; dış çerçevenin içine 4'er mm boşlukla girer.</p></li><li><h4>Mafsal ve menteşe deliklerini delin</h4><p>Dört ayağı üst üste bağlayıp P deliğini tek seferde delin (Ø8,5). Q deliğini iki M2'nin üst ucundan 15 mm içeride açın.</p></li><li><h4>Tabla çerçevesini yapın</h4><p>596 × 596 mm çerçeve, ortada artı şeklinde kayıtlar. Alt yüze iki kulak: iç çerçevenin iç yüzlerine denk gelecek şekilde, kenardan 70 mm içeride.</p></li><li><h4>Tırnakları yerinde kaynatın</h4><p>Masayı kurun, tablayı semer çubuğuna indirin, su terazisiyle yatay olduğuna bakın. Çubuğun iki yanına tırnakları puntalayın.</p></li><li><h4>Ayak tabanları, deneme, boya</h4><p>Ayak uçlarına taban sacı. On kez açıp kapatın. Sökün, boyayın, tablayı örün, kurun.</p></li></ol>
+    <p class="not"><b>Örgü tabla ve bardak:</b> sık örülmüş yüzeyde tabak ve geniş bardak durur, ince ayaklı kadeh durmaz. Düz yüzey isteyene tablanın üstüne 5 mm temperli cam ya da 3 mm şeffaf polikarbon levha önerin. Katlanırken levha ayrı taşınır.</p>
+  </section>
+
+  <section id="orgu" class="sar cizgili">
+    <div class="baslik">
+      <p class="etiket">Örgü</p>
+      <h2>Aynı yöntem, küçük yüzeyler</h2>
+      <p class="olc">Örgü yöntemi oturma grubundakiyle aynı: önce çözgü çerçevenin çevresine sarılır, sonra atkı bir alt bir üst geçirilir. Adımlar ve çizimler <a href="elde-yapim.html#orgu">oturma grubu kılavuzunun örgü bölümünde</a>.</p>
+    </div>
+    <div class="kaydir"><table class="tb"><thead><tr><th>Yüzey</th><th>Ölçü (mm)</th><th class="r">Şerit (m)</th><th>Tahmini süre</th></tr></thead><tbody><tr><td>Sandalye oturağı</td><td>400 × 380</td><td class="r">54</td><td>1,5–2 saat</td></tr><tr><td>Sandalye sırtı</td><td>470 × 268</td><td class="r">46</td><td>1–1,5 saat</td></tr><tr><td>Masa tablası</td><td>600 × 600</td><td class="r">124</td><td>3–4 saat</td></tr></tbody></table></div>
+    <ul class="mad">
+      <li><b>Oturak yük taşır.</b> Şeridi panellerden daha gergin sarın ve oturak için çift kat çözgü düşünün (her çizgiye iki tur). İlk oturakta ortadan bastırıp esnemeyi ölçün; 100 kg altında 20 mm'den fazla çökmemeli.</li>
+      <li><b>Sırt doğrudan dikmelere örülür.</b> Çözgü iki rayın çevresinden, atkı iki dikmenin çevresinden döner. Sandalye boyandıktan sonra, kurulu hâlde örün.</li>
+      <li><b>Kulak ve tırnak yerlerinde</b> şeridi kulağın iki yanından geçirin, üstüne bindirmeyin.</li>
+    </ul>
+  </section>
+
+  <section id="test" class="sar cizgili">
+    <div class="baslik">
+      <p class="etiket">Satmadan önce</p>
+      <h2>Sandalye yük testinden geçmeden satılmaz</h2>
+      <p class="olc">Katlanır sandalye, üstünde insan varken kapanırsa yaralar. Aşağıdakilerin hepsini ilk sandalyede yapın, sonuçları yazın. Biri tutmazsa tasarımı birlikte düzeltiriz.</p>
+    </div>
+    <div class="ikili">
+      <div>
+        <h3 class="ara ilk">Sandalye</h3>
+        <ul class="mad kutu">
+          <li>Oturağa 150 kg (kum torbaları), 10 dakika: kalıcı eğilme yok, mafsal cıvataları eğilmemiş</li>
+          <li>Oturağın en ön kenarına 100 kg: sandalye öne devrilmiyor</li>
+          <li>Oturmuşken sırta bütün gücüyle yaslanma: kırık yeri ve kaynak sağlam, sandalye arkaya devrilmiyor</li>
+          <li>Oturmuşken sağa sola sallanma: çerçeveler yalpalamıyor</li>
+          <li>Oturağa sertçe, düşer gibi oturma, 20 kez: tırnaklar çubuktan atmıyor</li>
+          <li>100 kez açıp kapama: cıvatalar gevşemiyor, boya mafsalda soyulmuyor</li>
+          <li>Sandalyeyi sırtından tutup kaldırma: kontrolsüz kapanıp parmak sıkıştırmıyor</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="ara ilk">Masa</h3>
+        <ul class="mad kutu">
+          <li>Tablanın ortasına 40 kg: çökme 5 mm'den az</li>
+          <li>Tablanın bir kenarına 20 kg: masa devrilmiyor, tabla semerden kalkmıyor</li>
+          <li>Tablayı kenarından tutup masayı kaldırma: ayaklar kapanmıyor (kapanıyorsa tırnakların altına küçük bir kanca dili ekleyin)</li>
+          <li>Masayı yandan itme: yalpalama kabul edilir düzeyde</li>
+          <li>50 kez açıp kapama</li>
+          <li>Dolu su bardağı tablanın dört köşesinde duruyor</li>
+        </ul>
+      </div>
+    </div>
+    <p class="not"><b>Fiyat:</b> sitede bu iki ürüne fiyat koymadım. İlk sandalye ve masayı yapınca malzeme fişlerini ve süreleri yazın; fiyatı o sayılarla belirleriz.</p>
+  </section>
+
+</main>
+<footer>
+  <div class="sar alt">
+    <span>SEKİ Dış Mekân Mobilya · Konya · Elde yapım kılavuzu</span>
+    <span class="mono">Katlanır seri KS-1 / KM-1 · Rev A · 10 Ekim 2026</span>
+  </div>
+  <div class="sar"><p class="kvk">Bütün ölçüler milimetredir. Bu belge ilk örnek içindir; ölçüler ve yöntem denemeden sonra güncellenebilir. <a href="index.html">Ana sayfa</a> · <a href="elde-yapim.html">Oturma grubu kılavuzu</a> · <a href="katlanir-yapim.html">Katlanır sandalye ve masa kılavuzu</a></p></div>
+</footer>
+</body>
+</html>
